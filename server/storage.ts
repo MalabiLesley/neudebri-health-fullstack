@@ -1,30 +1,338 @@
-import { type User, type InsertUser } from "@shared/schema";
+import { 
+  type User, type InsertUser,
+  type Appointment, type InsertAppointment,
+  type HealthRecord, type InsertHealthRecord,
+  type VitalSigns, type InsertVitalSigns,
+  type LabResult, type InsertLabResult,
+  type Prescription, type InsertPrescription,
+  type Message, type InsertMessage,
+  type Department, type InsertDepartment,
+  type DashboardStats,
+  type AppointmentWithDetails,
+  type MessageWithSender,
+  type PrescriptionWithDoctor,
+  type LabResultWithDoctor,
+} from "@shared/schema";
 import { randomUUID } from "crypto";
 
-// modify the interface with any CRUD methods
-// you might need
-
 export interface IStorage {
+  // Users
   getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  getUsersByRole(role: string): Promise<User[]>;
+  getAllPatients(): Promise<User[]>;
+  getAllDoctors(): Promise<User[]>;
+  
+  // Appointments
+  getAppointments(userId: string, role: string): Promise<AppointmentWithDetails[]>;
+  getUpcomingAppointments(userId: string, role: string): Promise<AppointmentWithDetails[]>;
+  getVirtualAppointments(userId: string, role: string): Promise<AppointmentWithDetails[]>;
+  createAppointment(appointment: InsertAppointment): Promise<Appointment>;
+  updateAppointmentStatus(id: string, status: string): Promise<Appointment | undefined>;
+  
+  // Health Records
+  getHealthRecords(patientId: string): Promise<HealthRecord[]>;
+  createHealthRecord(record: InsertHealthRecord): Promise<HealthRecord>;
+  
+  // Vital Signs
+  getVitalSigns(patientId: string): Promise<VitalSigns[]>;
+  createVitalSigns(vitals: InsertVitalSigns): Promise<VitalSigns>;
+  
+  // Lab Results
+  getLabResults(patientId: string): Promise<LabResultWithDoctor[]>;
+  createLabResult(result: InsertLabResult): Promise<LabResult>;
+  
+  // Prescriptions
+  getPrescriptions(userId: string, role: string): Promise<PrescriptionWithDoctor[]>;
+  createPrescription(prescription: InsertPrescription): Promise<Prescription>;
+  
+  // Messages
+  getMessages(userId: string): Promise<MessageWithSender[]>;
+  createMessage(message: InsertMessage): Promise<Message>;
+  markMessageAsRead(id: string): Promise<Message | undefined>;
+  
+  // Departments
+  getDepartments(): Promise<Department[]>;
+  createDepartment(department: InsertDepartment): Promise<Department>;
+  
+  // Dashboard
+  getDashboardStats(userId: string, role: string): Promise<DashboardStats>;
+  
+  // Contacts
+  getContacts(userId: string, role: string): Promise<User[]>;
 }
 
 export class MemStorage implements IStorage {
   private users: Map<string, User>;
+  private appointments: Map<string, Appointment>;
+  private healthRecords: Map<string, HealthRecord>;
+  private vitalSigns: Map<string, VitalSigns>;
+  private labResults: Map<string, LabResult>;
+  private prescriptions: Map<string, Prescription>;
+  private messages: Map<string, Message>;
+  private departments: Map<string, Department>;
 
   constructor() {
     this.users = new Map();
+    this.appointments = new Map();
+    this.healthRecords = new Map();
+    this.vitalSigns = new Map();
+    this.labResults = new Map();
+    this.prescriptions = new Map();
+    this.messages = new Map();
+    this.departments = new Map();
+    
+    this.seedData();
   }
 
+  private seedData() {
+    // Create demo users
+    const patientId = "patient-001";
+    const doctorId = "doctor-001";
+    const doctor2Id = "doctor-002";
+    const adminId = "admin-001";
+    const nurseId = "nurse-001";
+
+    // Patient
+    this.users.set(patientId, {
+      id: patientId,
+      username: "patient",
+      password: "password",
+      email: "john.doe@email.com",
+      firstName: "John",
+      lastName: "Doe",
+      role: "patient",
+      phone: "+254 712 345 678",
+      dateOfBirth: "1985-06-15",
+      gender: "male",
+      address: "123 Health Street, Nairobi, Kenya",
+      avatarUrl: null,
+      specialty: null,
+      licenseNumber: null,
+      department: null,
+      isActive: true,
+    });
+
+    // Doctors
+    this.users.set(doctorId, {
+      id: doctorId,
+      username: "doctor",
+      password: "password",
+      email: "dr.smith@neudebri.com",
+      firstName: "Sarah",
+      lastName: "Smith",
+      role: "doctor",
+      phone: "+254 722 111 222",
+      dateOfBirth: "1978-03-20",
+      gender: "female",
+      address: "Neudebri Medical Center",
+      avatarUrl: null,
+      specialty: "Internal Medicine",
+      licenseNumber: "KEN-MED-12345",
+      department: "Internal Medicine",
+      isActive: true,
+    });
+
+    this.users.set(doctor2Id, {
+      id: doctor2Id,
+      username: "doctor2",
+      password: "password",
+      email: "dr.johnson@neudebri.com",
+      firstName: "Michael",
+      lastName: "Johnson",
+      role: "doctor",
+      phone: "+254 722 333 444",
+      dateOfBirth: "1982-09-10",
+      gender: "male",
+      address: "Neudebri Medical Center",
+      avatarUrl: null,
+      specialty: "Cardiology",
+      licenseNumber: "KEN-MED-67890",
+      department: "Cardiology",
+      isActive: true,
+    });
+
+    // Admin
+    this.users.set(adminId, {
+      id: adminId,
+      username: "admin",
+      password: "password",
+      email: "admin@neudebri.com",
+      firstName: "Admin",
+      lastName: "User",
+      role: "admin",
+      phone: "+254 700 000 000",
+      dateOfBirth: "1990-01-01",
+      gender: "other",
+      address: "Neudebri Health System HQ",
+      avatarUrl: null,
+      specialty: null,
+      licenseNumber: null,
+      department: "Administration",
+      isActive: true,
+    });
+
+    // Nurse
+    this.users.set(nurseId, {
+      id: nurseId,
+      username: "nurse",
+      password: "password",
+      email: "nurse.mary@neudebri.com",
+      firstName: "Mary",
+      lastName: "Wanjiku",
+      role: "nurse",
+      phone: "+254 711 555 666",
+      dateOfBirth: "1992-07-25",
+      gender: "female",
+      address: "Neudebri Medical Center",
+      avatarUrl: null,
+      specialty: "General Nursing",
+      licenseNumber: "KEN-NUR-11111",
+      department: "Internal Medicine",
+      isActive: true,
+    });
+
+    // Create departments
+    const depts = [
+      { name: "Internal Medicine", description: "General medical care and diagnostics", location: "Building A, Floor 2", phone: "+254 20 111 1111" },
+      { name: "Cardiology", description: "Heart and cardiovascular care", location: "Building B, Floor 1", phone: "+254 20 222 2222" },
+      { name: "Pediatrics", description: "Child and adolescent healthcare", location: "Building A, Floor 3", phone: "+254 20 333 3333" },
+      { name: "Laboratory", description: "Diagnostic testing and analysis", location: "Building C, Floor 1", phone: "+254 20 444 4444" },
+      { name: "Radiology", description: "Medical imaging services", location: "Building C, Floor 2", phone: "+254 20 555 5555" },
+      { name: "Pharmacy", description: "Medication dispensing and consultation", location: "Building A, Floor 1", phone: "+254 20 666 6666" },
+    ];
+
+    depts.forEach((dept, i) => {
+      const id = `dept-${i + 1}`;
+      this.departments.set(id, {
+        id,
+        name: dept.name,
+        description: dept.description,
+        headDoctorId: i === 0 ? doctorId : i === 1 ? doctor2Id : null,
+        location: dept.location,
+        phone: dept.phone,
+        isActive: true,
+      });
+    });
+
+    // Create appointments
+    const now = new Date();
+    const appointments = [
+      {
+        patientId,
+        doctorId,
+        dateTime: new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+        endTime: new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000 + 30 * 60 * 1000).toISOString(),
+        type: "in_person" as const,
+        status: "scheduled" as const,
+        reason: "Annual physical examination",
+        department: "Internal Medicine",
+      },
+      {
+        patientId,
+        doctorId: doctor2Id,
+        dateTime: new Date(now.getTime() + 5 * 24 * 60 * 60 * 1000).toISOString(),
+        endTime: new Date(now.getTime() + 5 * 24 * 60 * 60 * 1000 + 30 * 60 * 1000).toISOString(),
+        type: "virtual" as const,
+        status: "confirmed" as const,
+        reason: "Follow-up on blood pressure management",
+        department: "Cardiology",
+      },
+      {
+        patientId,
+        doctorId,
+        dateTime: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+        endTime: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000 + 30 * 60 * 1000).toISOString(),
+        type: "in_person" as const,
+        status: "completed" as const,
+        reason: "Flu symptoms consultation",
+        department: "Internal Medicine",
+      },
+    ];
+
+    appointments.forEach((apt, i) => {
+      const id = `apt-${i + 1}`;
+      this.appointments.set(id, { id, ...apt, notes: null });
+    });
+
+    // Create health records
+    const healthRecords = [
+      { patientId, recordType: "condition", title: "Hypertension", description: "Essential hypertension, well controlled with medication", date: "2023-01-15", severity: "moderate", status: "chronic" },
+      { patientId, recordType: "allergy", title: "Penicillin", description: "Allergic reaction to penicillin-based antibiotics", date: "2020-05-10", severity: "severe", status: "active" },
+      { patientId, recordType: "allergy", title: "Shellfish", description: "Mild allergic reaction to shellfish", date: "2019-08-22", severity: "mild", status: "active" },
+      { patientId, recordType: "immunization", title: "COVID-19 Vaccine (Pfizer)", description: "Third booster dose administered", date: "2023-11-01", severity: null, status: null },
+      { patientId, recordType: "immunization", title: "Influenza Vaccine", description: "Annual flu shot", date: "2024-10-15", severity: null, status: null },
+      { patientId, recordType: "surgery", title: "Appendectomy", description: "Laparoscopic appendectomy performed successfully", date: "2018-03-20", severity: null, status: "resolved" },
+    ];
+
+    healthRecords.forEach((rec, i) => {
+      const id = `hr-${i + 1}`;
+      this.healthRecords.set(id, { id, ...rec, doctorId });
+    });
+
+    // Create vital signs
+    const vitals = [
+      { bloodPressureSystolic: 128, bloodPressureDiastolic: 82, heartRate: 72, temperature: "98.4", respiratoryRate: 16, oxygenSaturation: 98, weight: "78", height: "175" },
+      { bloodPressureSystolic: 130, bloodPressureDiastolic: 85, heartRate: 75, temperature: "98.6", respiratoryRate: 18, oxygenSaturation: 97, weight: "78.5", height: "175" },
+      { bloodPressureSystolic: 125, bloodPressureDiastolic: 80, heartRate: 70, temperature: "98.2", respiratoryRate: 15, oxygenSaturation: 99, weight: "77.8", height: "175" },
+    ];
+
+    vitals.forEach((v, i) => {
+      const id = `vs-${i + 1}`;
+      const recordedAt = new Date(now.getTime() - i * 30 * 24 * 60 * 60 * 1000).toISOString();
+      this.vitalSigns.set(id, { id, patientId, recordedAt, recordedBy: nurseId, ...v, notes: null });
+    });
+
+    // Create lab results
+    const labs = [
+      { testName: "Complete Blood Count (CBC)", testCode: "CBC-001", status: "completed" as const, result: "Normal", normalRange: "N/A", unit: "", isAbnormal: false },
+      { testName: "Hemoglobin A1C", testCode: "HBA1C-001", status: "completed" as const, result: "5.8", normalRange: "4.0-5.6", unit: "%", isAbnormal: true },
+      { testName: "Lipid Panel", testCode: "LIPID-001", status: "completed" as const, result: "Total: 195", normalRange: "<200", unit: "mg/dL", isAbnormal: false },
+      { testName: "Thyroid Panel (TSH)", testCode: "TSH-001", status: "pending" as const, result: null, normalRange: "0.4-4.0", unit: "mIU/L", isAbnormal: false },
+    ];
+
+    labs.forEach((lab, i) => {
+      const id = `lab-${i + 1}`;
+      const orderedDate = new Date(now.getTime() - (i + 1) * 7 * 24 * 60 * 60 * 1000).toISOString();
+      const resultDate = lab.status === "completed" ? new Date(now.getTime() - i * 5 * 24 * 60 * 60 * 1000).toISOString() : null;
+      this.labResults.set(id, { id, patientId, orderedBy: doctorId, orderedDate, resultDate, ...lab, notes: null });
+    });
+
+    // Create prescriptions
+    const prescriptions = [
+      { medicationName: "Lisinopril", dosage: "10mg", frequency: "Once daily", route: "oral", refillsRemaining: 2, refillsTotal: 3, status: "active" as const, instructions: "Take in the morning with water", pharmacy: "Neudebri Pharmacy" },
+      { medicationName: "Metformin", dosage: "500mg", frequency: "Twice daily", route: "oral", refillsRemaining: 1, refillsTotal: 2, status: "active" as const, instructions: "Take with meals", pharmacy: "Neudebri Pharmacy" },
+      { medicationName: "Atorvastatin", dosage: "20mg", frequency: "Once daily", route: "oral", refillsRemaining: 0, refillsTotal: 3, status: "completed" as const, instructions: "Take at bedtime", pharmacy: "Neudebri Pharmacy" },
+    ];
+
+    prescriptions.forEach((rx, i) => {
+      const id = `rx-${i + 1}`;
+      const startDate = new Date(now.getTime() - (90 - i * 30) * 24 * 60 * 60 * 1000).toISOString();
+      this.prescriptions.set(id, { id, patientId, doctorId, startDate, endDate: null, ...rx, notes: null });
+    });
+
+    // Create messages
+    const msgs = [
+      { senderId: doctorId, receiverId: patientId, subject: "Lab Results Available", content: "Dear John,\n\nYour recent lab results are now available in your patient portal. Your A1C is slightly elevated at 5.8%. I recommend we discuss dietary adjustments at your next appointment.\n\nBest regards,\nDr. Sarah Smith", priority: "normal", isRead: false },
+      { senderId: patientId, receiverId: doctorId, subject: "Question about medication", content: "Dr. Smith,\n\nI've been experiencing some dizziness after taking my blood pressure medication in the morning. Should I be concerned?\n\nThank you,\nJohn", priority: "high", isRead: true },
+      { senderId: doctor2Id, receiverId: patientId, subject: "Upcoming Virtual Appointment", content: "Hello John,\n\nThis is a reminder about your upcoming virtual consultation on cardiology follow-up. Please ensure you have your blood pressure readings from the past week ready to discuss.\n\nSee you soon,\nDr. Michael Johnson", priority: "normal", isRead: false },
+    ];
+
+    msgs.forEach((msg, i) => {
+      const id = `msg-${i + 1}`;
+      const sentAt = new Date(now.getTime() - i * 2 * 24 * 60 * 60 * 1000).toISOString();
+      this.messages.set(id, { id, ...msg, sentAt, readAt: msg.isRead ? sentAt : null, isArchived: false, attachments: null });
+    });
+  }
+
+  // User methods
   async getUser(id: string): Promise<User | undefined> {
     return this.users.get(id);
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+    return Array.from(this.users.values()).find((user) => user.username === username);
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
@@ -32,6 +340,218 @@ export class MemStorage implements IStorage {
     const user: User = { ...insertUser, id };
     this.users.set(id, user);
     return user;
+  }
+
+  async getUsersByRole(role: string): Promise<User[]> {
+    return Array.from(this.users.values()).filter((user) => user.role === role);
+  }
+
+  async getAllPatients(): Promise<User[]> {
+    return this.getUsersByRole("patient");
+  }
+
+  async getAllDoctors(): Promise<User[]> {
+    return Array.from(this.users.values()).filter((user) => user.role === "doctor" || user.role === "nurse");
+  }
+
+  // Appointment methods
+  async getAppointments(userId: string, role: string): Promise<AppointmentWithDetails[]> {
+    const appointments = Array.from(this.appointments.values());
+    const filtered = role === "patient" 
+      ? appointments.filter((a) => a.patientId === userId)
+      : role === "doctor" || role === "nurse"
+        ? appointments.filter((a) => a.doctorId === userId)
+        : appointments;
+    
+    return Promise.all(filtered.map(async (apt) => ({
+      ...apt,
+      patient: await this.getUser(apt.patientId),
+      doctor: await this.getUser(apt.doctorId),
+    })));
+  }
+
+  async getUpcomingAppointments(userId: string, role: string): Promise<AppointmentWithDetails[]> {
+    const all = await this.getAppointments(userId, role);
+    const now = new Date();
+    return all
+      .filter((a) => new Date(a.dateTime) >= now && a.status !== "cancelled")
+      .sort((a, b) => new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime());
+  }
+
+  async getVirtualAppointments(userId: string, role: string): Promise<AppointmentWithDetails[]> {
+    const all = await this.getAppointments(userId, role);
+    return all.filter((a) => a.type === "virtual");
+  }
+
+  async createAppointment(appointment: InsertAppointment): Promise<Appointment> {
+    const id = randomUUID();
+    const apt: Appointment = { ...appointment, id };
+    this.appointments.set(id, apt);
+    return apt;
+  }
+
+  async updateAppointmentStatus(id: string, status: string): Promise<Appointment | undefined> {
+    const apt = this.appointments.get(id);
+    if (apt) {
+      apt.status = status as any;
+      this.appointments.set(id, apt);
+    }
+    return apt;
+  }
+
+  // Health Record methods
+  async getHealthRecords(patientId: string): Promise<HealthRecord[]> {
+    return Array.from(this.healthRecords.values())
+      .filter((r) => r.patientId === patientId)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }
+
+  async createHealthRecord(record: InsertHealthRecord): Promise<HealthRecord> {
+    const id = randomUUID();
+    const hr: HealthRecord = { ...record, id };
+    this.healthRecords.set(id, hr);
+    return hr;
+  }
+
+  // Vital Signs methods
+  async getVitalSigns(patientId: string): Promise<VitalSigns[]> {
+    return Array.from(this.vitalSigns.values())
+      .filter((v) => v.patientId === patientId)
+      .sort((a, b) => new Date(b.recordedAt).getTime() - new Date(a.recordedAt).getTime());
+  }
+
+  async createVitalSigns(vitals: InsertVitalSigns): Promise<VitalSigns> {
+    const id = randomUUID();
+    const vs: VitalSigns = { ...vitals, id };
+    this.vitalSigns.set(id, vs);
+    return vs;
+  }
+
+  // Lab Result methods
+  async getLabResults(patientId: string): Promise<LabResultWithDoctor[]> {
+    const results = Array.from(this.labResults.values())
+      .filter((r) => r.patientId === patientId)
+      .sort((a, b) => new Date(b.orderedDate).getTime() - new Date(a.orderedDate).getTime());
+    
+    return Promise.all(results.map(async (r) => ({
+      ...r,
+      orderedByDoctor: r.orderedBy ? await this.getUser(r.orderedBy) : undefined,
+    })));
+  }
+
+  async createLabResult(result: InsertLabResult): Promise<LabResult> {
+    const id = randomUUID();
+    const lr: LabResult = { ...result, id };
+    this.labResults.set(id, lr);
+    return lr;
+  }
+
+  // Prescription methods
+  async getPrescriptions(userId: string, role: string): Promise<PrescriptionWithDoctor[]> {
+    const prescriptions = Array.from(this.prescriptions.values());
+    const filtered = role === "patient"
+      ? prescriptions.filter((p) => p.patientId === userId)
+      : role === "doctor" || role === "nurse"
+        ? prescriptions.filter((p) => p.doctorId === userId)
+        : prescriptions;
+    
+    return Promise.all(filtered.map(async (p) => ({
+      ...p,
+      doctor: await this.getUser(p.doctorId),
+    })));
+  }
+
+  async createPrescription(prescription: InsertPrescription): Promise<Prescription> {
+    const id = randomUUID();
+    const rx: Prescription = { ...prescription, id };
+    this.prescriptions.set(id, rx);
+    return rx;
+  }
+
+  // Message methods
+  async getMessages(userId: string): Promise<MessageWithSender[]> {
+    const messages = Array.from(this.messages.values())
+      .filter((m) => m.senderId === userId || m.receiverId === userId)
+      .sort((a, b) => new Date(b.sentAt).getTime() - new Date(a.sentAt).getTime());
+    
+    return Promise.all(messages.map(async (m) => ({
+      ...m,
+      sender: await this.getUser(m.senderId),
+      receiver: await this.getUser(m.receiverId),
+    })));
+  }
+
+  async createMessage(message: InsertMessage): Promise<Message> {
+    const id = randomUUID();
+    const msg: Message = { ...message, id };
+    this.messages.set(id, msg);
+    return msg;
+  }
+
+  async markMessageAsRead(id: string): Promise<Message | undefined> {
+    const msg = this.messages.get(id);
+    if (msg) {
+      msg.isRead = true;
+      msg.readAt = new Date().toISOString();
+      this.messages.set(id, msg);
+    }
+    return msg;
+  }
+
+  // Department methods
+  async getDepartments(): Promise<Department[]> {
+    return Array.from(this.departments.values());
+  }
+
+  async createDepartment(department: InsertDepartment): Promise<Department> {
+    const id = randomUUID();
+    const dept: Department = { ...department, id };
+    this.departments.set(id, dept);
+    return dept;
+  }
+
+  // Dashboard stats
+  async getDashboardStats(userId: string, role: string): Promise<DashboardStats> {
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startOfWeek = new Date(startOfToday);
+    startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+
+    const appointments = await this.getAppointments(userId, role);
+    const messages = await this.getMessages(userId);
+    const prescriptions = await this.getPrescriptions(userId, role);
+    
+    const patientId = role === "patient" ? userId : undefined;
+    const labResults = patientId ? await this.getLabResults(patientId) : [];
+
+    return {
+      totalPatients: (await this.getAllPatients()).length,
+      totalDoctors: (await this.getAllDoctors()).length,
+      appointmentsToday: appointments.filter((a) => {
+        const aptDate = new Date(a.dateTime);
+        return aptDate >= startOfToday && aptDate < new Date(startOfToday.getTime() + 24 * 60 * 60 * 1000);
+      }).length,
+      appointmentsThisWeek: appointments.filter((a) => {
+        const aptDate = new Date(a.dateTime);
+        return aptDate >= startOfWeek && aptDate < new Date(startOfWeek.getTime() + 7 * 24 * 60 * 60 * 1000) && a.status !== "cancelled";
+      }).length,
+      pendingLabResults: labResults.filter((r) => r.status === "pending" || r.status === "in_progress").length,
+      activePrescriptions: prescriptions.filter((p) => p.status === "active").length,
+      unreadMessages: messages.filter((m) => !m.isRead && m.receiverId === userId).length,
+      virtualCareSessions: appointments.filter((a) => 
+        a.type === "virtual" && 
+        new Date(a.dateTime) >= startOfWeek && 
+        new Date(a.dateTime) < new Date(startOfWeek.getTime() + 7 * 24 * 60 * 60 * 1000)
+      ).length,
+    };
+  }
+
+  // Contacts
+  async getContacts(userId: string, role: string): Promise<User[]> {
+    if (role === "patient") {
+      return this.getAllDoctors();
+    }
+    return this.getAllPatients();
   }
 }
 
