@@ -29,7 +29,19 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const res = await fetch(queryKey.join("/") as string, {
+    let url = queryKey[0] as string;
+    
+    // Add user context from localStorage if available
+    const storedUser = localStorage.getItem("neudebri-user");
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser);
+        const separator = url.includes("?") ? "&" : "?";
+        url = `${url}${separator}userId=${user.id}&role=${user.role}`;
+      } catch {}
+    }
+    
+    const res = await fetch(url, {
       credentials: "include",
     });
 

@@ -20,11 +20,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (storedUser) {
       try {
         setUser(JSON.parse(storedUser));
+        setIsLoading(false);
+        return;
       } catch {
         localStorage.removeItem("neudebri-user");
       }
     }
-    setIsLoading(false);
+    // Auto-load patient demo user if no user stored
+    fetch("/api/auth/demo/patient")
+      .then((res) => res.json())
+      .then((data) => {
+        setUser(data.user);
+        localStorage.setItem("neudebri-user", JSON.stringify(data.user));
+      })
+      .catch(() => {})
+      .finally(() => setIsLoading(false));
   }, []);
 
   const login = async (username: string, password: string): Promise<boolean> => {
