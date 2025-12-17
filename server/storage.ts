@@ -1,10 +1,10 @@
 import { 
-  type User, type InsertUser,
-  type Appointment, type InsertAppointment,
+  type User, type InsertUser, type UserRole,
+  type Appointment, type InsertAppointment, type AppointmentType, type AppointmentStatus,
   type HealthRecord, type InsertHealthRecord,
   type VitalSigns, type InsertVitalSigns,
-  type LabResult, type InsertLabResult,
-  type Prescription, type InsertPrescription,
+  type LabResult, type InsertLabResult, type LabResultStatus,
+  type Prescription, type InsertPrescription, type PrescriptionStatus,
   type Message, type InsertMessage,
   type Department, type InsertDepartment,
   type DashboardStats,
@@ -337,7 +337,20 @@ export class MemStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = randomUUID();
-    const user: User = { ...insertUser, id };
+    const user: User = {
+      ...insertUser,
+      id,
+      role: insertUser.role as UserRole,
+      address: insertUser.address ?? null,
+      phone: insertUser.phone ?? null,
+      dateOfBirth: insertUser.dateOfBirth ?? null,
+      gender: insertUser.gender ?? null,
+      avatarUrl: insertUser.avatarUrl ?? null,
+      specialty: insertUser.specialty ?? null,
+      licenseNumber: insertUser.licenseNumber ?? null,
+      department: insertUser.department ?? null,
+      isActive: insertUser.isActive ?? true,
+    };
     this.users.set(id, user);
     return user;
   }
@@ -385,7 +398,15 @@ export class MemStorage implements IStorage {
 
   async createAppointment(appointment: InsertAppointment): Promise<Appointment> {
     const id = randomUUID();
-    const apt: Appointment = { ...appointment, id };
+    const apt: Appointment = {
+      ...appointment,
+      id,
+      type: appointment.type as AppointmentType,
+      status: appointment.status as AppointmentStatus,
+      reason: appointment.reason ?? null,
+      notes: appointment.notes ?? null,
+      department: appointment.department ?? null,
+    };
     this.appointments.set(id, apt);
     return apt;
   }
@@ -408,7 +429,14 @@ export class MemStorage implements IStorage {
 
   async createHealthRecord(record: InsertHealthRecord): Promise<HealthRecord> {
     const id = randomUUID();
-    const hr: HealthRecord = { ...record, id };
+    const hr: HealthRecord = {
+      ...record,
+      id,
+      description: record.description ?? null,
+      doctorId: record.doctorId ?? null,
+      severity: record.severity ?? null,
+      status: record.status ?? null,
+    };
     this.healthRecords.set(id, hr);
     return hr;
   }
@@ -422,7 +450,20 @@ export class MemStorage implements IStorage {
 
   async createVitalSigns(vitals: InsertVitalSigns): Promise<VitalSigns> {
     const id = randomUUID();
-    const vs: VitalSigns = { ...vitals, id };
+    const vs: VitalSigns = {
+      ...vitals,
+      id,
+      recordedBy: vitals.recordedBy ?? null,
+      bloodPressureSystolic: vitals.bloodPressureSystolic ?? null,
+      bloodPressureDiastolic: vitals.bloodPressureDiastolic ?? null,
+      heartRate: vitals.heartRate ?? null,
+      temperature: vitals.temperature ?? null,
+      respiratoryRate: vitals.respiratoryRate ?? null,
+      oxygenSaturation: vitals.oxygenSaturation ?? null,
+      weight: vitals.weight ?? null,
+      height: vitals.height ?? null,
+      notes: vitals.notes ?? null,
+    };
     this.vitalSigns.set(id, vs);
     return vs;
   }
@@ -441,7 +482,19 @@ export class MemStorage implements IStorage {
 
   async createLabResult(result: InsertLabResult): Promise<LabResult> {
     const id = randomUUID();
-    const lr: LabResult = { ...result, id };
+    const lr: LabResult = {
+      ...result,
+      id,
+      testCode: result.testCode ?? null,
+      orderedBy: result.orderedBy ?? null,
+      resultDate: result.resultDate ?? null,
+      result: result.result ?? null,
+      normalRange: result.normalRange ?? null,
+      unit: result.unit ?? null,
+      isAbnormal: result.isAbnormal ?? false,
+      notes: result.notes ?? null,
+      status: result.status as LabResultStatus,
+    };
     this.labResults.set(id, lr);
     return lr;
   }
@@ -463,7 +516,18 @@ export class MemStorage implements IStorage {
 
   async createPrescription(prescription: InsertPrescription): Promise<Prescription> {
     const id = randomUUID();
-    const rx: Prescription = { ...prescription, id };
+    const rx: Prescription = {
+      ...prescription,
+      id,
+      route: prescription.route ?? null,
+      endDate: prescription.endDate ?? null,
+      refillsRemaining: prescription.refillsRemaining ?? 0,
+      refillsTotal: prescription.refillsTotal ?? 0,
+      instructions: prescription.instructions ?? null,
+      pharmacy: prescription.pharmacy ?? null,
+      notes: prescription.notes ?? null,
+      status: prescription.status as PrescriptionStatus,
+    };
     this.prescriptions.set(id, rx);
     return rx;
   }
@@ -483,7 +547,16 @@ export class MemStorage implements IStorage {
 
   async createMessage(message: InsertMessage): Promise<Message> {
     const id = randomUUID();
-    const msg: Message = { ...message, id };
+    const msg: Message = {
+      ...message,
+      id,
+      subject: message.subject ?? null,
+      readAt: message.readAt ?? null,
+      isRead: message.isRead ?? false,
+      isArchived: message.isArchived ?? false,
+      priority: message.priority ?? "normal",
+      attachments: message.attachments ?? null,
+    };
     this.messages.set(id, msg);
     return msg;
   }
@@ -505,7 +578,15 @@ export class MemStorage implements IStorage {
 
   async createDepartment(department: InsertDepartment): Promise<Department> {
     const id = randomUUID();
-    const dept: Department = { ...department, id };
+    const dept: Department = {
+      ...department,
+      id,
+      description: department.description ?? null,
+      headDoctorId: department.headDoctorId ?? null,
+      location: department.location ?? null,
+      phone: department.phone ?? null,
+      isActive: department.isActive ?? true,
+    };
     this.departments.set(id, dept);
     return dept;
   }
