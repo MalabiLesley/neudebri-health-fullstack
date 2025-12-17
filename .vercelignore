@@ -4,10 +4,7 @@ node_modules
 README.md
 design_guidelines.md
 structure.txt
-client/
-server/
-script/
-shared/
 .vscode
 .env.local
 .env.*.local
+.DS_Store
