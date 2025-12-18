@@ -4,7 +4,6 @@ import { serveStatic } from "../server/static";
 import { createServer } from "http";
 
 const app = express();
-const httpServer = createServer(app);
 
 declare module "http" {
   interface IncomingMessage {
@@ -28,11 +27,13 @@ async function initializeApp() {
   if (initialized) return;
 
   try {
+    const httpServer = createServer(app);
     await registerRoutes(httpServer, app);
 
     app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
       const status = err.status || err.statusCode || 500;
       const message = err.message || "Internal Server Error";
+      console.error(`[API Error] ${status}: ${message}`, err);
       res.status(status).json({ message });
     });
 
@@ -40,15 +41,19 @@ async function initializeApp() {
     serveStatic(app);
     
     initialized = true;
+    console.log("[API] App initialized successfully");
   } catch (err) {
-    console.error("Failed to initialize app:", err);
+    console.error("[API] Failed to initialize app:", err);
     throw err;
   }
 }
 
-// Export for Vercel serverless handler
-export default async (req: Request, res: Response) => {
-  await initializeApp();
-  app(req, res);
-};
+// Initialize immediately
+initializeApp().catch(err => {
+  console.error("[API] Fatal initialization error:", err);
+  process.exit(1);
+});
+
+// Export the Express app directly for Vercel
+export default app;
 
