@@ -23,12 +23,12 @@ app.use(express.urlencoded({ extended: false }));
 
 let initialized = false;
 
-async function initializeApp() {
+function initializeApp() {
   if (initialized) return;
 
   try {
     const httpServer = createServer(app);
-    await registerRoutes(httpServer, app);
+    registerRoutes(httpServer, app);
 
     app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
       const status = err.status || err.statusCode || 500;
@@ -44,14 +44,13 @@ async function initializeApp() {
     console.log("[API] App initialized successfully");
   } catch (err) {
     console.error("[API] Failed to initialize app:", err);
-    throw err;
   }
 }
 
-// Initialize immediately
-initializeApp().catch(err => {
-  console.error("[API] Fatal initialization error:", err);
-  process.exit(1);
+// Initialize on first request
+app.use((req, res, next) => {
+  initializeApp();
+  next();
 });
 
 // Export the Express app directly for Vercel

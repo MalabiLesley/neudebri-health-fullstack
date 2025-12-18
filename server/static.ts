@@ -25,10 +25,9 @@ export function serveStatic(app: Express) {
   }
 
   if (!distPath) {
-    console.error(`[Static] Could not find dist directory. Tried:\n${possiblePaths.map(p => `  - ${p}`).join("\n")}`);
-    throw new Error(
-      `Could not find the build directory. Tried: ${possiblePaths.join(", ")}. Make sure to build the client first.`,
-    );
+    console.warn(`[Static] Could not find dist directory. Tried:\n${possiblePaths.map(p => `  - ${p}`).join("\n")}`);
+    console.warn("[Static] Static files will not be served. Make sure to run 'npm run build' first.");
+    return;
   }
 
   // Serve static files with caching
