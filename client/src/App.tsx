@@ -22,6 +22,9 @@ import Doctors from "@/pages/doctors";
 import Departments from "@/pages/departments";
 import Settings from "@/pages/settings";
 import NotFound from "@/pages/not-found";
+import WoundCare from "@/pages/wound-care";
+import Nurses from "@/pages/nurses";
+import Finance from "@/pages/finance";
 
 function Router() {
   return (
@@ -33,8 +36,11 @@ function Router() {
       <Route path="/lab-results" component={LabResults} />
       <Route path="/messages" component={Messages} />
       <Route path="/virtual-care" component={VirtualCare} />
+      <Route path="/wound-care" component={WoundCare} />
       <Route path="/patients" component={Patients} />
       <Route path="/doctors" component={Doctors} />
+      <Route path="/nurses" component={Nurses} />
+      <Route path="/finance" component={Finance} />
       <Route path="/departments" component={Departments} />
       <Route path="/settings" component={Settings} />
       <Route component={NotFound} />

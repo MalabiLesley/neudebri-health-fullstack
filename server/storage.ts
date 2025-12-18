@@ -12,6 +12,9 @@ import {
   type MessageWithSender,
   type PrescriptionWithDoctor,
   type LabResultWithDoctor,
+  type WoundRecord, type InsertWoundRecord,
+  type BillingRecord, type InsertBillingRecord,
+  type InsuranceProvider, type Payment, type InsertPayment,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 
@@ -55,6 +58,19 @@ export interface IStorage {
   // Departments
   getDepartments(): Promise<Department[]>;
   createDepartment(department: InsertDepartment): Promise<Department>;
+
+  // Wound care
+  getWoundRecords(patientId: string): Promise<WoundRecord[]>;
+  createWoundRecord(record: InsertWoundRecord): Promise<WoundRecord>;
+
+  // Nurses
+  getNurses(): Promise<User[]>;
+
+  // Finance / Billing
+  getBillingForPatient(patientId: string): Promise<BillingRecord[]>;
+  createBillingRecord(billing: InsertBillingRecord): Promise<BillingRecord>;
+  getInsuranceProviders(): Promise<InsuranceProvider[]>;
+  createPayment(payment: InsertPayment): Promise<Payment>;
   
   // Dashboard
   getDashboardStats(userId: string, role: string): Promise<DashboardStats>;
@@ -72,6 +88,10 @@ export class MemStorage implements IStorage {
   private prescriptions: Map<string, Prescription>;
   private messages: Map<string, Message>;
   private departments: Map<string, Department>;
+  private woundRecords: Map<string, WoundRecord>;
+  private billings: Map<string, BillingRecord>;
+  private insurances: Map<string, InsuranceProvider>;
+  private payments: Map<string, Payment>;
 
   constructor() {
     this.users = new Map();
@@ -82,6 +102,10 @@ export class MemStorage implements IStorage {
     this.prescriptions = new Map();
     this.messages = new Map();
     this.departments = new Map();
+    this.woundRecords = new Map();
+    this.billings = new Map();
+    this.insurances = new Map();
+    this.payments = new Map();
     
     this.seedData();
   }
@@ -323,6 +347,41 @@ export class MemStorage implements IStorage {
       const id = `msg-${i + 1}`;
       const sentAt = new Date(now.getTime() - i * 2 * 24 * 60 * 60 * 1000).toISOString();
       this.messages.set(id, { id, ...msg, sentAt, readAt: msg.isRead ? sentAt : null, isArchived: false, attachments: null });
+    });
+
+    // Sample wound care record
+    const woundId = `wound-1`;
+    this.woundRecords.set(woundId, {
+      id: woundId,
+      patientId: patientId,
+      nurseId: nurseId,
+      doctorId: doctorId,
+      date: new Date().toISOString(),
+      woundType: "Pressure Ulcer",
+      size: "2cm x 1cm",
+      stage: "Stage II",
+      description: "Small superficial ulcer on left heel",
+      treatmentPlan: "Cleanse with saline, apply dressing twice daily",
+      photos: null,
+      notes: "Monitor for infection",
+    });
+
+    // Sample insurance providers
+    this.insurances.set("ins-1", { id: "ins-1", name: "Sanitas Health Insurance", code: "SAN-001" });
+    this.insurances.set("ins-2", { id: "ins-2", name: "National Health Cover", code: "NHC-KE" });
+
+    // Sample billing record
+    const billId = `bill-1`;
+    this.billings.set(billId, {
+      id: billId,
+      patientId,
+      amount: 12000,
+      currency: "KES",
+      status: "pending",
+      insuranceProviderId: "ins-1",
+      invoiceNumber: "INV-1001",
+      createdAt: new Date().toISOString(),
+      description: "Wound care consultation and dressing",
     });
   }
 
@@ -633,6 +692,68 @@ export class MemStorage implements IStorage {
       return this.getAllDoctors();
     }
     return this.getAllPatients();
+  }
+
+  // Wound care methods
+  async getWoundRecords(patientId: string): Promise<WoundRecord[]> {
+    return Array.from(this.woundRecords.values())
+      .filter((w) => w.patientId === patientId)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }
+
+  async createWoundRecord(record: InsertWoundRecord): Promise<WoundRecord> {
+    const id = randomUUID();
+    const wr: WoundRecord = {
+      id,
+      ...record,
+    };
+    this.woundRecords.set(id, wr);
+    return wr;
+  }
+
+  // Nurses
+  async getNurses(): Promise<User[]> {
+    return Array.from(this.users.values()).filter((u) => u.role === "nurse");
+  }
+
+  // Finance / Billing
+  async getBillingForPatient(patientId: string): Promise<BillingRecord[]> {
+    return Array.from(this.billings.values())
+      .filter((b) => b.patientId === patientId)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  async createBillingRecord(billing: InsertBillingRecord): Promise<BillingRecord> {
+    const id = randomUUID();
+    const br: BillingRecord = {
+      id,
+      ...billing,
+      status: billing.status ?? "pending",
+      createdAt: new Date().toISOString(),
+    } as BillingRecord;
+    this.billings.set(id, br);
+    return br;
+  }
+
+  async getInsuranceProviders(): Promise<InsuranceProvider[]> {
+    return Array.from(this.insurances.values());
+  }
+
+  async createPayment(payment: InsertPayment): Promise<Payment> {
+    const id = randomUUID();
+    const paidAt = new Date().toISOString();
+    const p: Payment = { id, ...payment, paidAt } as Payment;
+    this.payments.set(id, p);
+
+    // mark billing as paid or partial
+    const billing = this.billings.get(payment.billingId);
+    if (billing) {
+      if (payment.amount >= billing.amount) billing.status = "paid";
+      else billing.status = "partial";
+      this.billings.set(billing.id, billing);
+    }
+
+    return p;
   }
 }
 

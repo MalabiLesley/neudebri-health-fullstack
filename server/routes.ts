@@ -203,5 +203,57 @@ export async function registerRoutes(
     }
   });
 
+  // Wound care routes
+  app.get("/api/wound-care", async (req, res) => {
+    const patientId = (req.query.patientId as string) || "patient-001";
+    const records = await storage.getWoundRecords(patientId);
+    res.json(records);
+  });
+
+  app.post("/api/wound-care", async (req, res) => {
+    try {
+      const record = await storage.createWoundRecord(req.body);
+      res.status(201).json(record);
+    } catch (error) {
+      res.status(400).json({ message: "Failed to create wound record" });
+    }
+  });
+
+  // Nurses
+  app.get("/api/nurses", async (_req, res) => {
+    const nurses = await storage.getNurses();
+    res.json(nurses);
+  });
+
+  // Finance / Billing
+  app.get("/api/finance/billing", async (req, res) => {
+    const patientId = (req.query.patientId as string) || "patient-001";
+    const bills = await storage.getBillingForPatient(patientId);
+    res.json(bills);
+  });
+
+  app.post("/api/finance/billing", async (req, res) => {
+    try {
+      const bill = await storage.createBillingRecord(req.body);
+      res.status(201).json(bill);
+    } catch (error) {
+      res.status(400).json({ message: "Failed to create billing record" });
+    }
+  });
+
+  app.get("/api/finance/insurances", async (_req, res) => {
+    const providers = await storage.getInsuranceProviders();
+    res.json(providers);
+  });
+
+  app.post("/api/finance/payments", async (req, res) => {
+    try {
+      const payment = await storage.createPayment(req.body);
+      res.status(201).json(payment);
+    } catch (error) {
+      res.status(400).json({ message: "Failed to create payment" });
+    }
+  });
+
   return httpServer;
 }

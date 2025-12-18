@@ -204,3 +204,58 @@ export interface PrescriptionWithDoctor extends Prescription {
 export interface LabResultWithDoctor extends LabResult {
   orderedByDoctor?: User;
 }
+
+// Wound care records (basic schema for in-memory/demo use)
+export interface WoundRecord {
+  id: string;
+  patientId: string;
+  nurseId?: string | null;
+  doctorId?: string | null;
+  date: string;
+  woundType?: string | null; // e.g., diabetic ulcer, pressure ulcer
+  size?: string | null; // e.g., 2cm x 1cm
+  stage?: string | null; // e.g., Stage II
+  description?: string | null;
+  treatmentPlan?: string | null;
+  photos?: string[] | null; // URLs
+  notes?: string | null;
+}
+
+export type InsertWoundRecord = Omit<WoundRecord, "id">;
+
+// Finance / billing interfaces (skeleton)
+export type BillingStatus = "pending" | "paid" | "partial" | "cancelled";
+
+export interface BillingRecord {
+  id: string;
+  patientId: string;
+  amount: number;
+  currency?: string | null;
+  status: BillingStatus;
+  insuranceProviderId?: string | null;
+  invoiceNumber?: string | null;
+  createdAt: string;
+  description?: string | null;
+}
+
+export type InsertBillingRecord = Omit<BillingRecord, "id" | "createdAt">;
+
+export interface InsuranceProvider {
+  id: string;
+  name: string;
+  code?: string | null;
+}
+
+export interface Payment {
+  id: string;
+  billingId: string;
+  method: string; // e.g., card, mpesa, cash, insurance
+  amount: number;
+  currency?: string | null;
+  status: "completed" | "failed" | "pending";
+  paidAt: string;
+  details?: string | null;
+}
+
+export type InsertPayment = Omit<Payment, "id" | "paidAt">;
+
