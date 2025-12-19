@@ -1,16 +1,5 @@
 {
   "buildCommand": "npm run build",
   "installCommand": "npm ci",
-  "functions": {
-    "api/index.ts": {
-      "runtime": "nodejs20.x",
-      "memory": 1024
-    }
-  },
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api"
-    }
-  ]
+  "outputDirectory": "dist/public"
 }

@@ -59,31 +59,8 @@ async function buildAll() {
     logLevel: "info",
   });
 
-  // Build api/index.ts for Vercel serverless
-  console.log("building api function...");
-  await esbuild({
-    entryPoints: ["api/index.ts"],
-    platform: "node",
-    bundle: true,
-    format: "cjs",
-    outfile: "api/index.js",
-    define: {
-      "process.env.NODE_ENV": '"production"',
-    },
-    external: externals,
-    logLevel: "info",
-  });
-  console.log("✓ Built api/index.js");
-
-  // For Vercel: copy public directory to .vercel/functions/api/public
-  // so it's available to the serverless function
-  try {
-    await cp("dist/public", ".vercel/functions/api/public", { recursive: true, force: true });
-    console.log("✓ Copied public files to .vercel/functions/api/public");
-  } catch (err) {
-    // .vercel might not exist in development, that's okay
-    console.log("(Skipped Vercel-specific copy - not in Vercel build environment)");
-  }
+  // Note: api/index.ts is handled by Vercel's serverless detection
+  // Do NOT compile it - Vercel will do that automatically
 }
 
 buildAll().catch((err) => {
