@@ -2,6 +2,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "../server/routes";
 import { serveStatic } from "../server/static";
 import { createServer } from "http";
+import type { IncomingMessage, ServerResponse } from "http";
 
 const app = express();
 
@@ -53,9 +54,8 @@ app.use((req, res, next) => {
   next();
 });
 
-// Export both as default (for some frameworks) and as named export (for Vercel)
-export default app;
-
-// Also export as handler for Vercel
-export const handler = app;
+// Vercel serverless handler - MUST accept (req, res) parameters
+export default (req: IncomingMessage, res: ServerResponse) => {
+  app(req as any, res as any);
+};
 
