@@ -6,11 +6,10 @@ export function serveStatic(app: Express) {
   // Try multiple possible paths for public directory
   const possiblePaths = [
     // For local dev and Vercel
-    path.resolve(__dirname, "..", "dist"),
-    // Old locations (fallback)
     path.resolve(__dirname, "..", "public"),
-    path.resolve(__dirname, "..", "..", "dist", "public"),
-    path.resolve(process.cwd(), "dist"),
+    // Also try dist/public
+    path.resolve(__dirname, "..", "dist", "public"),
+    // From process.cwd()
     path.resolve(process.cwd(), "dist", "public"),
     path.resolve(process.cwd(), "public"),
   ];
