@@ -59,6 +59,22 @@ async function buildAll() {
     logLevel: "info",
   });
 
+  // Build api/index.ts for Vercel serverless
+  console.log("building api function...");
+  await esbuild({
+    entryPoints: ["api/index.ts"],
+    platform: "node",
+    bundle: true,
+    format: "esm",
+    outfile: "api/index.js",
+    define: {
+      "process.env.NODE_ENV": '"production"',
+    },
+    external: externals,
+    logLevel: "info",
+  });
+  console.log("✓ Built api/index.js");
+
   // For Vercel: copy public directory to .vercel/functions/api/public
   // so it's available to the serverless function
   try {
