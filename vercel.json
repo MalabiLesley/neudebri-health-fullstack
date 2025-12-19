@@ -1,14 +1,4 @@
 {
   "buildCommand": "npm run build",
-  "installCommand": "npm ci",
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/api"
-    }
-  ]
+  "installCommand": "npm ci"
 }

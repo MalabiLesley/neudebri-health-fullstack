@@ -53,8 +53,9 @@ app.use((req, res, next) => {
   next();
 });
 
-// Export handler for Vercel serverless
-export default function handler(req: any, res: any) {
-  return app(req, res);
-}
+// Export both as default (for some frameworks) and as named export (for Vercel)
+export default app;
+
+// Also export as handler for Vercel
+export const handler = app;
 
