@@ -54,8 +54,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Vercel serverless handler - MUST accept (req, res) parameters
-export default (req: IncomingMessage, res: ServerResponse) => {
-  app(req as any, res as any);
-};
+// Vercel serverless handler
+export default app;
 
