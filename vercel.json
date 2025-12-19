@@ -1,11 +1,4 @@
 {
   "buildCommand": "npm run build",
-  "installCommand": "npm ci",
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/api/index.ts",
-      "methods": ["GET", "HEAD", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
-    }
-  ]
+  "installCommand": "npm ci"
 }
