@@ -88,7 +88,7 @@ var require_depd = __commonJS({
       var site = callSiteLocation(stack[1]);
       var file = site[0];
       function deprecate(message) {
-        log.call(deprecate, message);
+        log2.call(deprecate, message);
       }
       deprecate._file = file;
       deprecate._ignored = isignored(namespace);
@@ -117,7 +117,7 @@ var require_depd = __commonJS({
       var str = process.env.TRACE_DEPRECATION || "";
       return containsNamespace(str, namespace);
     }
-    function log(message, site) {
+    function log2(message, site) {
       var haslisteners = eehaslisteners(process, "deprecation");
       if (!haslisteners && this._ignored) {
         return;
@@ -257,7 +257,7 @@ var require_depd = __commonJS({
         "message",
         "site",
         '"use strict"\nreturn function (' + args + ") {log.call(deprecate, message, site)\nreturn fn.apply(this, arguments)\n}"
-      )(fn, log, this, message, site);
+      )(fn, log2, this, message, site);
       return deprecatedfn;
     }
     function wrapproperty(obj, prop, message) {
@@ -282,13 +282,13 @@ var require_depd = __commonJS({
       var set = descriptor.set;
       if (typeof get === "function") {
         descriptor.get = function getter() {
-          log.call(deprecate, message, site);
+          log2.call(deprecate, message, site);
           return get.apply(this, arguments);
         };
       }
       if (typeof set === "function") {
         descriptor.set = function setter() {
-          log.call(deprecate, message, site);
+          log2.call(deprecate, message, site);
           return set.apply(this, arguments);
         };
       }
@@ -1125,7 +1125,7 @@ var require_debug = __commonJS({
 var require_browser = __commonJS({
   "node_modules/body-parser/node_modules/debug/src/browser.js"(exports2, module2) {
     exports2 = module2.exports = require_debug();
-    exports2.log = log;
+    exports2.log = log2;
     exports2.formatArgs = formatArgs;
     exports2.save = save;
     exports2.load = load;
@@ -1173,7 +1173,7 @@ var require_browser = __commonJS({
       });
       args.splice(lastC, 0, c);
     }
-    function log() {
+    function log2() {
       return "object" === typeof console && console.log && Function.prototype.apply.call(console.log, console, arguments);
     }
     function save(namespaces) {
@@ -1214,7 +1214,7 @@ var require_node = __commonJS({
     var util = require("util");
     exports2 = module2.exports = require_debug();
     exports2.init = init;
-    exports2.log = log;
+    exports2.log = log2;
     exports2.formatArgs = formatArgs;
     exports2.save = save;
     exports2.load = load;
@@ -1265,7 +1265,7 @@ var require_node = __commonJS({
         args[0] = (/* @__PURE__ */ new Date()).toUTCString() + " " + name + " " + args[0];
       }
     }
-    function log() {
+    function log2() {
       return stream.write(util.format.apply(util, arguments) + "\n");
     }
     function save(namespaces) {
@@ -17121,7 +17121,7 @@ var require_debug2 = __commonJS({
 var require_browser2 = __commonJS({
   "node_modules/finalhandler/node_modules/debug/src/browser.js"(exports2, module2) {
     exports2 = module2.exports = require_debug2();
-    exports2.log = log;
+    exports2.log = log2;
     exports2.formatArgs = formatArgs;
     exports2.save = save;
     exports2.load = load;
@@ -17169,7 +17169,7 @@ var require_browser2 = __commonJS({
       });
       args.splice(lastC, 0, c);
     }
-    function log() {
+    function log2() {
       return "object" === typeof console && console.log && Function.prototype.apply.call(console.log, console, arguments);
     }
     function save(namespaces) {
@@ -17210,7 +17210,7 @@ var require_node2 = __commonJS({
     var util = require("util");
     exports2 = module2.exports = require_debug2();
     exports2.init = init;
-    exports2.log = log;
+    exports2.log = log2;
     exports2.formatArgs = formatArgs;
     exports2.save = save;
     exports2.load = load;
@@ -17261,7 +17261,7 @@ var require_node2 = __commonJS({
         args[0] = (/* @__PURE__ */ new Date()).toUTCString() + " " + name + " " + args[0];
       }
     }
-    function log() {
+    function log2() {
       return stream.write(util.format.apply(util, arguments) + "\n");
     }
     function save(namespaces) {
@@ -17840,7 +17840,7 @@ var require_debug3 = __commonJS({
 var require_browser3 = __commonJS({
   "node_modules/express/node_modules/debug/src/browser.js"(exports2, module2) {
     exports2 = module2.exports = require_debug3();
-    exports2.log = log;
+    exports2.log = log2;
     exports2.formatArgs = formatArgs;
     exports2.save = save;
     exports2.load = load;
@@ -17888,7 +17888,7 @@ var require_browser3 = __commonJS({
       });
       args.splice(lastC, 0, c);
     }
-    function log() {
+    function log2() {
       return "object" === typeof console && console.log && Function.prototype.apply.call(console.log, console, arguments);
     }
     function save(namespaces) {
@@ -17929,7 +17929,7 @@ var require_node3 = __commonJS({
     var util = require("util");
     exports2 = module2.exports = require_debug3();
     exports2.init = init;
-    exports2.log = log;
+    exports2.log = log2;
     exports2.formatArgs = formatArgs;
     exports2.save = save;
     exports2.load = load;
@@ -17980,7 +17980,7 @@ var require_node3 = __commonJS({
         args[0] = (/* @__PURE__ */ new Date()).toUTCString() + " " + name + " " + args[0];
       }
     }
-    function log() {
+    function log2() {
       return stream.write(util.format.apply(util, arguments) + "\n");
     }
     function save(namespaces) {
@@ -19404,7 +19404,7 @@ var require_debug4 = __commonJS({
 var require_browser4 = __commonJS({
   "node_modules/send/node_modules/debug/src/browser.js"(exports2, module2) {
     exports2 = module2.exports = require_debug4();
-    exports2.log = log;
+    exports2.log = log2;
     exports2.formatArgs = formatArgs;
     exports2.save = save;
     exports2.load = load;
@@ -19452,7 +19452,7 @@ var require_browser4 = __commonJS({
       });
       args.splice(lastC, 0, c);
     }
-    function log() {
+    function log2() {
       return "object" === typeof console && console.log && Function.prototype.apply.call(console.log, console, arguments);
     }
     function save(namespaces) {
@@ -19493,7 +19493,7 @@ var require_node4 = __commonJS({
     var util = require("util");
     exports2 = module2.exports = require_debug4();
     exports2.init = init;
-    exports2.log = log;
+    exports2.log = log2;
     exports2.formatArgs = formatArgs;
     exports2.save = save;
     exports2.load = load;
@@ -19544,7 +19544,7 @@ var require_node4 = __commonJS({
         args[0] = (/* @__PURE__ */ new Date()).toUTCString() + " " + name + " " + args[0];
       }
     }
-    function log() {
+    function log2() {
       return stream.write(util.format.apply(util, arguments) + "\n");
     }
     function save(namespaces) {
@@ -23521,6 +23521,8 @@ __export(index_exports, {
   default: () => index_default
 });
 module.exports = __toCommonJS(index_exports);
+
+// server/index.ts
 var import_express2 = __toESM(require_express2(), 1);
 
 // server/storage.ts
@@ -24098,7 +24100,7 @@ var MemStorage = class {
 var storage = new MemStorage();
 
 // server/routes.ts
-async function registerRoutes(httpServer, app2) {
+async function registerRoutes(httpServer2, app2) {
   app2.get("/api/auth/demo/:role", async (req, res) => {
     const role = req.params.role;
     let username = "patient";
@@ -24301,7 +24303,7 @@ async function registerRoutes(httpServer, app2) {
       res.status(400).json({ message: "Failed to create payment" });
     }
   });
-  return httpServer;
+  return httpServer2;
 }
 
 // server/static.ts
@@ -24310,10 +24312,10 @@ var import_fs = __toESM(require("fs"), 1);
 var import_path = __toESM(require("path"), 1);
 function serveStatic(app2) {
   const possiblePaths = [
-    // For Vercel serverless function
+    // For local dev and Vercel
     import_path.default.resolve(__dirname, "..", "public"),
-    // For local dev from api/index.ts
-    import_path.default.resolve(__dirname, "..", "..", "dist", "public"),
+    // Also try dist/public
+    import_path.default.resolve(__dirname, "..", "dist", "public"),
     // From process.cwd()
     import_path.default.resolve(process.cwd(), "dist", "public"),
     import_path.default.resolve(process.cwd(), "public")
@@ -24351,9 +24353,10 @@ function serveStatic(app2) {
   });
 }
 
-// api/index.ts
+// server/index.ts
 var import_http = require("http");
 var app = (0, import_express2.default)();
+var httpServer = (0, import_http.createServer)(app);
 app.use(
   import_express2.default.json({
     verify: (req, _res, buf) => {
@@ -24362,30 +24365,82 @@ app.use(
   })
 );
 app.use(import_express2.default.urlencoded({ extended: false }));
-var initialized = false;
-function initializeApp() {
-  if (initialized) return;
-  try {
-    const httpServer = (0, import_http.createServer)(app);
-    registerRoutes(httpServer, app);
-    app.use((err, _req, res, _next) => {
-      const status = err.status || err.statusCode || 500;
-      const message = err.message || "Internal Server Error";
-      console.error(`[API Error] ${status}: ${message}`, err);
-      res.status(status).json({ message });
-    });
-    serveStatic(app);
-    initialized = true;
-    console.log("[API] App initialized successfully");
-  } catch (err) {
-    console.error("[API] Failed to initialize app:", err);
-  }
+function log(message, source = "express") {
+  const formattedTime = (/* @__PURE__ */ new Date()).toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true
+  });
+  console.log(`${formattedTime} [${source}] ${message}`);
 }
 app.use((req, res, next) => {
-  initializeApp();
+  const start = Date.now();
+  const path2 = req.path;
+  let capturedJsonResponse = void 0;
+  const originalResJson = res.json;
+  res.json = function(bodyJson, ...args) {
+    capturedJsonResponse = bodyJson;
+    return originalResJson.apply(res, [bodyJson, ...args]);
+  };
+  res.on("finish", () => {
+    const duration = Date.now() - start;
+    if (path2.startsWith("/api")) {
+      let logLine = `${req.method} ${path2} ${res.statusCode} in ${duration}ms`;
+      if (capturedJsonResponse) {
+        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
+      }
+      log(logLine);
+    }
+  });
   next();
 });
-var index_default = app;
+var initialized = false;
+async function initializeApp() {
+  if (initialized) return;
+  await registerRoutes(httpServer, app);
+  app.use((err, _req, res, _next) => {
+    const status = err.status || err.statusCode || 500;
+    const message = err.message || "Internal Server Error";
+    res.status(status).json({ message });
+    throw err;
+  });
+  if (true) {
+    serveStatic(app);
+  } else {
+    const { setupVite } = await null;
+    await setupVite(httpServer, app);
+  }
+  initialized = true;
+}
+app.use((req, res, next) => {
+  if (!initialized) {
+    initializeApp().then(() => next()).catch(next);
+  } else {
+    next();
+  }
+});
+(async () => {
+  await initializeApp();
+  if (!process.env.VERCEL) {
+    const port = parseInt(process.env.PORT || "5000", 10);
+    httpServer.listen(
+      {
+        port,
+        host: "0.0.0.0",
+        reusePort: true
+      },
+      () => {
+        log(`serving on port ${port}`);
+      }
+    );
+  }
+})();
+var server_default = app;
+
+// api/index.ts
+console.log("[API] Module loaded - exporting Express app");
+var index_default = server_default;
 /*! Bundled license information:
 
 depd/index.js:
