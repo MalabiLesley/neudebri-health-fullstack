@@ -8,3 +8,6 @@ structure.txt
 .env.local
 .env.*.local
 .DS_Store
+# These should NOT be ignored
+!api/
+!package.json
