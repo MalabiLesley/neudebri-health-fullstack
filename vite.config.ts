@@ -15,6 +15,18 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    // Reduce large single chunks by splitting common vendor libraries
+    chunkSizeWarningLimit: 900,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ["react", "react-dom"],
+          charts: ["recharts"],
+          ui: ["@tanstack/react-query", "wouter", "lucide-react"],
+          vendors: ["tailwindcss", "framer-motion"]
+        }
+      }
+    }
   },
   server: {
     fs: {
