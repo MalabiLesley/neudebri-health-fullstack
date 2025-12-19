@@ -1,5 +1,14 @@
 {
   "buildCommand": "npm run build",
   "installCommand": "npm ci",
-  "outputDirectory": "dist/public"
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
