@@ -4,13 +4,13 @@ import path from "path";
 
 export function serveStatic(app: Express) {
   // Try multiple possible paths for public directory
-  // In Vercel serverless, this will be inside .vercel/functions/api/
   const possiblePaths = [
-    // For Vercel serverless function
+    // For local dev and Vercel
+    path.resolve(__dirname, "..", "dist"),
+    // Old locations (fallback)
     path.resolve(__dirname, "..", "public"),
-    // For local dev from api/index.ts
     path.resolve(__dirname, "..", "..", "dist", "public"),
-    // From process.cwd()
+    path.resolve(process.cwd(), "dist"),
     path.resolve(process.cwd(), "dist", "public"),
     path.resolve(process.cwd(), "public"),
   ];
