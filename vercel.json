@@ -1,11 +1,15 @@
 {
   "buildCommand": "npm run build",
   "installCommand": "npm ci",
-  "outputDirectory": "dist",
-  "rewrites": [
+  "functions": {
+    "dist/index.cjs": {
+      "runtime": "nodejs20.x"
+    }
+  },
+  "routes": [
     {
-      "source": "/(.*)",
-      "destination": "/index.cjs"
+      "src": "/(.*)",
+      "dest": "dist/index.cjs"
     }
   ]
 }
