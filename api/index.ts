@@ -50,10 +50,12 @@ function initializeApp() {
 
 // Initialize on first request
 app.use((req, res, next) => {
+  console.log(`[API] ${req.method} ${req.path} - initializing`);
   initializeApp();
   next();
 });
 
 // Vercel serverless handler
+console.log("[API] Module loaded");
 export default app;
 
