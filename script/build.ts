@@ -1,6 +1,6 @@
 import { build as esbuild } from "esbuild";
 import { build as viteBuild } from "vite";
-import { rm, readFile } from "fs/promises";
+import { rm, readFile, cp } from "fs/promises";
 
 // server deps to bundle to reduce openat(2) syscalls
 // which helps cold start times
@@ -58,6 +58,16 @@ async function buildAll() {
     external: externals,
     logLevel: "info",
   });
+
+  // For Vercel: copy public directory to .vercel/functions/api/public
+  // so it's available to the serverless function
+  try {
+    await cp("dist/public", ".vercel/functions/api/public", { recursive: true, force: true });
+    console.log("✓ Copied public files to .vercel/functions/api/public");
+  } catch (err) {
+    // .vercel might not exist in development, that's okay
+    console.log("(Skipped Vercel-specific copy - not in Vercel build environment)");
+  }
 }
 
 buildAll().catch((err) => {
