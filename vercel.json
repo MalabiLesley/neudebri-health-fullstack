@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "public": "dist",
   "builds": [
     {
       "src": "api/index.ts",
@@ -10,7 +9,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "api/index.ts"
+      "dest": "/api/index.ts"
     }
   ]
 }
