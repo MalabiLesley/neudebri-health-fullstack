@@ -59,7 +59,11 @@ app.use((req, res, next) => {
   next();
 });
 
-(async () => {
+let initialized = false;
+
+async function initializeApp() {
+  if (initialized) return;
+  
   await registerRoutes(httpServer, app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
@@ -79,20 +83,38 @@ app.use((req, res, next) => {
     const { setupVite } = await import("./vite");
     await setupVite(httpServer, app);
   }
+  
+  initialized = true;
+}
 
-  // ALWAYS serve the app on the port specified in the environment variable PORT
-  // Other ports are firewalled. Default to 5000 if not specified.
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = parseInt(process.env.PORT || "5000", 10);
-  httpServer.listen(
-    {
-      port,
-      host: "0.0.0.0",
-      reusePort: true,
-    },
-    () => {
-      log(`serving on port ${port}`);
-    },
-  );
+// Initialize app on first request (for Vercel serverless)
+app.use((req, res, next) => {
+  if (!initialized) {
+    initializeApp().then(() => next()).catch(next);
+  } else {
+    next();
+  }
+});
+
+// For local development, start the server immediately
+(async () => {
+  await initializeApp();
+  
+  // Only listen if not running on Vercel (Vercel handles HTTP)
+  if (!process.env.VERCEL) {
+    const port = parseInt(process.env.PORT || "5000", 10);
+    httpServer.listen(
+      {
+        port,
+        host: "0.0.0.0",
+        reusePort: true,
+      },
+      () => {
+        log(`serving on port ${port}`);
+      },
+    );
+  }
 })();
+
+// Export app for Vercel serverless
+export default app;

@@ -1,61 +1,11 @@
-import express, { type Request, Response, NextFunction } from "express";
-import { registerRoutes } from "../server/routes";
-import { serveStatic } from "../server/static";
-import { createServer } from "http";
-import type { IncomingMessage, ServerResponse } from "http";
+// Vercel serverless function entry point
+// This imports and exports the main Express server
 
-const app = express();
+import app from "../server/index";
 
-declare module "http" {
-  interface IncomingMessage {
-    rawBody: unknown;
-  }
-}
+console.log("[API] Module loaded - exporting Express app");
 
-app.use(
-  express.json({
-    verify: (req, _res, buf) => {
-      req.rawBody = buf;
-    },
-  }),
-);
-
-app.use(express.urlencoded({ extended: false }));
-
-let initialized = false;
-
-function initializeApp() {
-  if (initialized) return;
-
-  try {
-    const httpServer = createServer(app);
-    registerRoutes(httpServer, app);
-
-    app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-      const status = err.status || err.statusCode || 500;
-      const message = err.message || "Internal Server Error";
-      console.error(`[API Error] ${status}: ${message}`, err);
-      res.status(status).json({ message });
-    });
-
-    // Serve static files
-    serveStatic(app);
-    
-    initialized = true;
-    console.log("[API] App initialized successfully");
-  } catch (err) {
-    console.error("[API] Failed to initialize app:", err);
-  }
-}
-
-// Initialize on first request
-app.use((req, res, next) => {
-  console.log(`[API] ${req.method} ${req.path} - initializing`);
-  initializeApp();
-  next();
-});
-
-// Vercel serverless handler
-console.log("[API] Module loaded");
+// Export the Express app as the default handler
+// Vercel's Node runtime will handle the HTTP protocol conversion
 export default app;
 
