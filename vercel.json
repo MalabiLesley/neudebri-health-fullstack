@@ -2,14 +2,14 @@
   "buildCommand": "npm run build",
   "installCommand": "npm ci",
   "functions": {
-    "dist/index.cjs": {
+    "dist/index.js": {
       "runtime": "nodejs20.x"
     }
   },
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "dist/index.cjs"
+      "dest": "dist/index.js"
     }
   ]
 }
