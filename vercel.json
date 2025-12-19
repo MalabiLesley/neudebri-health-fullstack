@@ -1,9 +1,7 @@
 {
   "buildCommand": "npm run build",
-  "public": "dist/public",
-  "functions": {
-    "api/index.ts": {
-      "runtime": "nodejs20.x"
-    }
-  }
+  "installCommand": "npm ci",
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api?path=$1" }
+  ]
 }
