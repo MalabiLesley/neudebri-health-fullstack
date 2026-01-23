@@ -1,10 +1,6 @@
 {
-  "buildCommand": "npm run build",
-  "installCommand": "npm ci",
-  "rewrites": [
-    {
-      "source": "/:path*",
-      "destination": "/api/[[...slugs]]"
-    }
-  ]
+  "buildCommand": "npm run build:client",
+  "outputDirectory": "dist/public",
+  "framework": "vite"
 }
+
