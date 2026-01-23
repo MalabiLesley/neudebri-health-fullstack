@@ -3,18 +3,8 @@
   "installCommand": "npm ci",
   "outputDirectory": "dist",
   "functions": {
-    "api/**": {
+    "api/index.cjs": {
       "runtime": "nodejs20.x"
     }
-  },
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "/index.js?path=api/:path*"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/index.js?path=/:path*"
-    }
-  ]
+  }
 }
