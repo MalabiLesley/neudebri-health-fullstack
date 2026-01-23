@@ -59,21 +59,8 @@ async function buildAll() {
     logLevel: "info",
   });
 
-  // Build api/[[...slugs]].ts for Vercel serverless catch-all
-  console.log("building api catch-all function...");
-  await esbuild({
-    entryPoints: ["api/[[...slugs]].ts"],
-    platform: "node",
-    bundle: true,
-    format: "cjs",
-    outfile: "api/[[...slugs]].cjs",
-    define: {
-      "process.env.NODE_ENV": '"production"',
-    },
-    external: externals,
-    logLevel: "info",
-  });
-  console.log("✓ Built api/[[...slugs]].cjs");
+  // Note: api/[[...slugs]].ts is handled by Vercel's build system,
+  // not by this script. Vercel compiles TypeScript API handlers automatically.
 }
 
 buildAll().catch((err) => {
