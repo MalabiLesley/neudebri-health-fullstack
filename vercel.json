@@ -1,7 +1,6 @@
 {
   "buildCommand": "bash build.sh",
   "outputDirectory": "dist/public",
-  "framework": "vite",
-  "nodeVersion": "24.x"
+  "framework": "vite"
 }
 
