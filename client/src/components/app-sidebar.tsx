@@ -13,7 +13,10 @@ import {
   Building2,
   LogOut,
   UserCircle,
-  Shield
+  Shield,
+  AlertTriangle,
+  Bed,
+  Stethoscope
 } from "lucide-react";
 import {
   Sidebar,
@@ -46,23 +49,36 @@ const patientNavItems = [
 
 const doctorNavItems = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
+  { title: "OPD Console", url: "/opd", icon: Stethoscope },
   { title: "Appointments", url: "/appointments", icon: Calendar },
   { title: "My Patients", url: "/patients", icon: Users },
   { title: "Virtual Care", url: "/virtual-care", icon: Video },
-  { title: "Wound Care", url: "/wound-care", icon: Activity },
   { title: "Nurses", url: "/nurses", icon: Users },
   { title: "Prescriptions", url: "/prescriptions", icon: Pill },
   { title: "Lab Results", url: "/lab-results", icon: TestTube },
   { title: "Messages", url: "/messages", icon: MessageSquare },
 ];
 
+const nurseNavItems = [
+  { title: "Dashboard", url: "/", icon: LayoutDashboard },
+  { title: "IPD Console", url: "/ipd", icon: Bed },
+  { title: "Emergency", url: "/emergency", icon: AlertTriangle },
+  { title: "My Patients", url: "/patients", icon: Users },
+  { title: "Vital Signs", url: "/health-records", icon: Activity },
+  { title: "Wound Care", url: "/wound-care", icon: Activity },
+  { title: "Messages", url: "/messages", icon: MessageSquare },
+];
+
 const adminNavItems = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
+  { title: "OPD", url: "/opd", icon: Stethoscope },
+  { title: "IPD", url: "/ipd", icon: Bed },
+  { title: "Emergency", url: "/emergency", icon: AlertTriangle },
   { title: "Appointments", url: "/appointments", icon: Calendar },
   { title: "Patients", url: "/patients", icon: Users },
   { title: "Doctors", url: "/doctors", icon: Activity },
-  { title: "Departments", url: "/departments", icon: Building2 },
   { title: "Nurses", url: "/nurses", icon: Users },
+  { title: "Departments", url: "/departments", icon: Building2 },
   { title: "Finance", url: "/finance", icon: Shield },
   { title: "Messages", url: "/messages", icon: MessageSquare },
   { title: "Settings", url: "/settings", icon: Settings },
@@ -74,8 +90,9 @@ export function AppSidebar() {
 
   const getNavItems = () => {
     switch (user?.role) {
-      case "doctor":
       case "nurse":
+        return nurseNavItems;
+      case "doctor":
         return doctorNavItems;
       case "admin":
         return adminNavItems;

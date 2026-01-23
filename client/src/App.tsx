@@ -25,6 +25,9 @@ import NotFound from "@/pages/not-found";
 import WoundCare from "@/pages/wound-care";
 import Nurses from "@/pages/nurses";
 import Finance from "@/pages/finance";
+import OPDConsole from "@/pages/opd-console";
+import IPDConsole from "@/pages/ipd-console";
+import EmergencyConsole from "@/pages/emergency-console";
 
 function Router() {
   return (
@@ -42,6 +45,9 @@ function Router() {
       <Route path="/nurses" component={Nurses} />
       <Route path="/finance" component={Finance} />
       <Route path="/departments" component={Departments} />
+      <Route path="/opd" component={OPDConsole} />
+      <Route path="/ipd" component={IPDConsole} />
+      <Route path="/emergency" component={EmergencyConsole} />
       <Route path="/settings" component={Settings} />
       <Route component={NotFound} />
     </Switch>
