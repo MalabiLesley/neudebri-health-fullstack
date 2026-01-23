@@ -1,10 +1,10 @@
 {
   "buildCommand": "npm run build",
   "installCommand": "npm ci",
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/api/[[...slugs]]"
+  "functions": {
+    "api/[[...slugs]].ts": {
+      "memory": 1024,
+      "maxDuration": 30
     }
-  ]
+  }
 }
