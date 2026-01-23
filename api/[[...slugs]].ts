@@ -1,13 +1,29 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import app from '../server/index';
+
+// Import and cache the app instance
+let app: any = null;
+
+async function getApp() {
+  if (!app) {
+    const { default: expressApp } = await import('../server/index');
+    app = expressApp;
+  }
+  return app;
+}
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // Vercel's serverless functions need explicit async handling
   try {
-    return app(req as any, res as any);
+    const expressApp = await getApp();
+    
+    // Call the Express app
+    // Express middleware will handle initialization
+    return expressApp(req as any, res as any);
   } catch (error) {
-    console.error('Handler error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error('API handler error:', error);
+    res.status(500).json({ 
+      error: 'Internal Server Error',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 }
 

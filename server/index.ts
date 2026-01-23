@@ -87,13 +87,12 @@ async function initializeApp() {
   initialized = true;
 }
 
-// Initialize app on first request (for Vercel serverless)
+// Initialize immediately for Vercel serverless
+const initPromise = initializeApp();
+
+// Initialize app on first request as fallback (for local development)
 app.use((req, res, next) => {
-  if (!initialized) {
-    initializeApp().then(() => next()).catch(next);
-  } else {
-    next();
-  }
+  initPromise.then(() => next()).catch(next);
 });
 
 // For local development, start the server immediately
