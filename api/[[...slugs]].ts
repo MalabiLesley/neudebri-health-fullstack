@@ -1,7 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-// Import the CommonJS built server
-import app from '../dist/index.cjs';
+import app from '../server/index';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  return app(req, res);
+  // Handle both VercelRequest/Response and Express request/response
+  return new Promise<void>((resolve) => {
+    app(req as any, res as any);
+    res.on('finish', () => resolve());
+  });
 }
