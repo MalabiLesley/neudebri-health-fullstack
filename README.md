@@ -1,53 +1,419 @@
-# Neudebri Health Monitoring System
+# 🏥 SANITAS HMIS - Hospital Management Information System
 
-A comprehensive, full-featured health monitoring system built with modern web technologies. Neudebri is a complete healthcare management platform that includes patient management, appointments, electronic health records, prescriptions, lab results, virtual care, and more.
+**Neudebri Health** - A comprehensive, production-grade **HMIS (Hospital Management Information System)** built on SANITAS standards for professional healthcare management.
 
-## 🏥 Features
+## 🎯 System Overview
 
-### Core Healthcare Features
-- **Patient Management** - Complete patient profiles with demographics, medical history, and health metrics
-- **Health Records** - Secure electronic health records (EHR) with full medical history
-- **Vital Signs Monitoring** - Real-time vital signs tracking with visual charts and trends
-- **Appointments** - Comprehensive appointment scheduling with doctor-patient matching
-- **Prescriptions** - E-prescriptions with refill management and pharmacy integration
-- **Lab Results** - Lab test ordering, result tracking, and historical analysis
-- **Virtual Care** - Secure video consultations and telemedicine sessions
-- **Wound Care** - Specialized wound assessment and treatment tracking
-- **Messages** - Secure HIPAA-compliant messaging between healthcare providers and patients
-- **Finance & Billing** - Invoice management, payment tracking, and insurance handling
+Neudebri is a complete enterprise-level healthcare management platform designed to:
+- **Manage patient care** across OPD, IPD, and Emergency departments
+- **Streamline clinical workflows** with specialized consoles for different user roles
+- **Track real-time hospital operations** including beds, wards, and staff allocation
+- **Facilitate secure communication** between healthcare providers and patients
+- **Generate comprehensive reports** and analytics for hospital management
 
-### Administrative Features
-- **Dashboard** - Comprehensive analytics and KPI tracking
-- **Staff Management** - Manage doctors, nurses, and medical staff
-- **Department Management** - Organize services and departments
-- **Patient Management** - View and manage all patients
-- **Reporting** - Generate reports on healthcare metrics
+---
 
-### User Roles
-- **Patient** - Access personal health records, book appointments, view test results
-- **Doctor** - Manage patients, write prescriptions, order tests, schedule appointments
-- **Nurse** - Assist with patient care, wound care documentation
-- **Admin** - System-wide management and reporting
+## 🏗️ HMIS Core Modules
+
+### 1. **OPD Console** (Out-Patient Department)
+Manages day-to-day outpatient consultations and follow-ups.
+
+**Key Features:**
+- Real-time consultation queue management
+- Doctor availability and scheduling
+- Patient check-in workflows
+- Prescription generation
+- Department-wise patient filtering
+- Consultation status tracking (Scheduled → In Progress → Completed)
+
+**Users:** Doctors, Admin
+
+### 2. **IPD Console** (In-Patient Department)
+Manages hospital admissions, ward assignments, and patient care.
+
+**Key Features:**
+- Ward and bed management
+- Patient admission and discharge tracking
+- Real-time bed occupancy monitoring
+- Ward-wise patient allocation
+- Patient transfer between wards
+- Nursing care assignments
+- Vitals monitoring
+
+**Users:** Nurses, Doctors, Admin
+
+### 3. **Emergency/Casualty Console**
+Manages emergency patients and critical care cases.
+
+**Key Features:**
+- Emergency patient triage system
+- Triage level classification:
+  - 🔴 **Critical** - Life-threatening emergencies
+  - 🟠 **Urgent** - Serious conditions requiring immediate attention
+  - 🟡 **Semi-Urgent** - Moderate conditions
+  - 🟢 **Non-Urgent** - Minor conditions
+- Real-time waiting time tracking
+- Doctor assignment for emergency cases
+- Critical alert management
+- Emergency resource allocation
+
+**Users:** Nurses, Doctors, Admin
+
+---
+
+## 👥 User Roles & Access
+
+### **Patient** 👤
+- View personal health records
+- Book and manage appointments
+- View prescriptions and lab results
+- Send messages to healthcare providers
+- Virtual consultations
+- Access medical history
+
+### **Doctor** 👨‍⚕️
+- **OPD Console Access** - Manage outpatient consultations
+- Schedule and manage patient appointments
+- Write prescriptions and order lab tests
+- Record patient observations and notes
+- Manage nurse assignments
+- Virtual consultations
+- Full patient medical records access
+
+### **Nurse** 👩‍⚕️
+- **IPD Console Access** - Manage inpatient ward care
+- **Emergency Console Access** - Handle emergency cases
+- Record vital signs and patient observations
+- Manage wound care and assessments
+- Patient communication
+- Medication administration tracking
+- Nursing care documentation
+
+### **Administrator** 👨‍💼
+- **Full System Access** - All consoles and modules
+- User management (Doctors, Nurses, Patients)
+- Department and staff management
+- Finance and billing administration
+- System configuration
+- Report generation and analytics
+- Hospital operations oversight
+
+---
+
+## 📊 Dashboard & Analytics
+
+### Executive Dashboard
+- Hospital KPIs and statistics
+- Patient volume and trends
+- Revenue tracking
+- Staff utilization metrics
+- Department performance analytics
+
+### Department Dashboard
+- Department-specific metrics
+- Patient queue status
+- Staff allocation and availability
+- Resource utilization
+
+### Personal Dashboard
+- Individual staff schedule
+- Patient queue and assignments
+- Pending tasks and alerts
+- Messages and notifications
+
+---
+
+## 💊 Clinical Features
+
+### Patient Management
+- Complete patient profiles with demographics
+- Medical history and previous records
+- Vital signs tracking with visual charts
+- Health records (diagnoses, conditions, allergies)
+- Document management
+
+### Appointment System
+- Schedule appointments with preferred doctors
+- Doctor availability management
+- Appointment reminders
+- Cancellation and rescheduling
+- No-show tracking
+
+### Prescription Management
+- E-prescription generation
+- Refill request management
+- Prescription history tracking
+- Pharmacy integration
+
+### Lab Management
+- Test ordering
+- Result tracking and reporting
+- Historical analysis
+- Test scheduling
+
+### Wound Care Tracking
+- Wound assessment documentation
+- Treatment tracking
+- Healing progress monitoring
+
+### Virtual Care
+- Secure video consultations
+- Telemedicine sessions
+- Remote patient monitoring
+
+---
+
+## 💰 Finance & Administration
+
+### Billing System
+- Patient billing and invoicing
+- Insurance claim management
+- Payment tracking and reconciliation
+- Billing reports and analytics
+
+### Staff Management
+- Doctor and nurse profiles
+- Specialization tracking
+- License management
+- Department assignments
+
+### Department Management
+- Department organization
+- Resource allocation
+- Performance tracking
+
+---
+
+## 🔐 Security & Compliance
+
+✅ **HIPAA Compliance** - Healthcare data protection standards  
+✅ **Role-Based Access Control (RBAC)** - User permission management  
+✅ **Data Encryption** - Secure transmission and storage  
+✅ **Audit Logging** - Complete activity tracking  
+✅ **Secure Messaging** - HIPAA-compliant communication  
+✅ **Backup & Disaster Recovery** - Data protection measures  
+
+---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js 18+ 
+- Node.js 18+
 - npm or yarn
-- PostgreSQL 12+ (for production)
+- PostgreSQL 12+ (optional, uses in-memory storage by default)
 
 ### Installation
 
-1. **Clone the repository**
 ```bash
+# Clone the repository
 git clone <repository-url>
 cd neudebri-health-fullstack
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
 ```
 
-2. **Install dependencies**
+**Available at:** `http://localhost:5000`
+
+### Build for Production
+
 ```bash
-npm install
+# Build client and server
+npm run build
+
+# Start production server
+npm start
 ```
+
+---
+
+## 📁 Project Structure
+
+```
+neudebri-health-fullstack/
+├── client/                    # React Frontend
+│   ├── src/
+│   │   ├── pages/            # Page components
+│   │   │   ├── dashboard.tsx    # Main dashboard
+│   │   │   ├── opd-console.tsx  # OPD module
+│   │   │   ├── ipd-console.tsx  # IPD module
+│   │   │   ├── emergency-console.tsx  # Emergency module
+│   │   │   ├── patients.tsx
+│   │   │   ├── doctors.tsx
+│   │   │   ├── nurses.tsx
+│   │   │   └── ...
+│   │   ├── components/       # Reusable UI components
+│   │   └── lib/             # Utility functions
+│   └── index.html
+├── server/                    # Express Backend
+│   ├── index.ts             # Server entry point
+│   ├── routes.ts            # API routes
+│   ├── static.ts            # Static file serving
+│   └── storage.ts           # Data storage layer
+├── shared/                    # Shared types and schemas
+│   └── schema.ts
+├── render.yaml              # Render deployment config
+├── vercel.json              # Vercel deployment config
+└── package.json
+```
+
+---
+
+## 🔗 API Endpoints
+
+### Authentication
+- `GET /api/auth/demo/:role` - Demo user login
+- `POST /api/auth/login` - User login
+
+### Patients
+- `GET /api/users/patients` - List all patients
+- `GET /api/patient/:id` - Get patient details
+- `POST /api/patients` - Create new patient
+
+### Doctors
+- `GET /api/users/doctors` - List all doctors
+- `GET /api/doctor/:id` - Get doctor details
+
+### Nurses
+- `GET /api/nurses` - List all nurses
+- `GET /api/nurse/:id` - Get nurse details
+
+### Appointments
+- `GET /api/appointments` - List appointments
+- `GET /api/appointments/upcoming` - Upcoming appointments
+- `POST /api/appointments` - Create appointment
+- `PATCH /api/appointments/:id/cancel` - Cancel appointment
+
+### Health Records
+- `GET /api/health-records` - Get health records
+- `POST /api/health-records` - Create health record
+
+### Vital Signs
+- `GET /api/vital-signs` - Get vital signs
+- `POST /api/vital-signs` - Record vital signs
+
+### Lab Results
+- `GET /api/lab-results` - Get lab results
+- `POST /api/lab-results` - Create lab result
+
+### Prescriptions
+- `GET /api/prescriptions` - List prescriptions
+- `POST /api/prescriptions` - Create prescription
+
+### Messaging
+- `GET /api/messages` - Get messages
+- `POST /api/messages` - Send message
+
+### Dashboard
+- `GET /api/dashboard/stats` - Get dashboard statistics
+
+---
+
+## 📱 Deployment
+
+### **Backend: Render.com**
+```bash
+# Configuration
+Build Command: npm run build
+Start Command: npm start
+Environment: production
+```
+
+### **Frontend: Vercel**
+```bash
+# Configuration
+Build Command: npm run build:client
+Output Directory: dist/public
+Environment: VITE_API_BASE=https://your-render-backend.com
+```
+
+---
+
+## 🎯 Demo Users
+
+### Patient
+- **Username:** patient
+- **Password:** password
+- **Role:** Patient
+
+### Doctor
+- **Username:** doctor
+- **Password:** password
+- **Role:** Doctor
+
+### Admin
+- **Username:** admin
+- **Password:** password
+- **Role:** Administrator
+
+---
+
+## 📚 Documentation
+
+- [SANITAS HMIS Specification](./SANITAS_HMIS_SPECIFICATION.md)
+- [Deployment Instructions](./DEPLOYMENT_INSTRUCTIONS.md)
+- [Design Guidelines](./design_guidelines.md)
+
+---
+
+## 🛠️ Technology Stack
+
+### Frontend
+- **React 18** - UI library
+- **TypeScript** - Type safety
+- **Vite** - Build tool
+- **Tailwind CSS** - Styling
+- **Wouter** - Routing
+- **TanStack React Query** - Data fetching
+
+### Backend
+- **Express.js** - Web framework
+- **Node.js** - Runtime
+- **TypeScript** - Type safety
+- **Drizzle ORM** - Database
+- **Zod** - Validation
+
+### Deployment
+- **Render.com** - Backend hosting
+- **Vercel** - Frontend hosting
+
+---
+
+## 📈 Performance
+
+- ⚡ Fast page loads
+- 📱 Mobile-responsive
+- 🔄 Real-time updates
+- 🎯 Optimized bundle size
+- 📊 Efficient data fetching
+
+---
+
+## 🤝 Contributing
+
+This is a professional HMIS system. For contributions or issues, please follow standard Git workflow practices.
+
+---
+
+## 📄 License
+
+MIT License - See LICENSE file for details
+
+---
+
+## 📞 Support
+
+For questions or support, please refer to the documentation or contact the development team.
+
+---
+
+**Version:** 1.0.0  
+**Status:** Production Ready ✅  
+**Last Updated:** January 23, 2026
+
 
 3. **Development Setup**
 ```bash
