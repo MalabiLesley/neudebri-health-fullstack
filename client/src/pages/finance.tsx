@@ -23,7 +23,7 @@ function FinanceSkeleton() {
   );
 }
 
-function getStatusColor(status: string): string {
+function getStatusColor(status: string): "default" | "destructive" | "outline" | "secondary" {
   switch (status.toLowerCase()) {
     case "paid":
       return "default";

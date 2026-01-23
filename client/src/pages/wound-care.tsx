@@ -23,7 +23,7 @@ function WoundRecordSkeleton() {
   );
 }
 
-function getStageColor(stage?: string | null): string {
+function getStageColor(stage?: string | null): "default" | "destructive" | "outline" | "secondary" {
   if (!stage) return "secondary";
   if (stage.includes("I") || stage === "1") return "outline";
   if (stage.includes("II") || stage === "2") return "secondary";
