@@ -59,21 +59,21 @@ async function buildAll() {
     logLevel: "info",
   });
 
-  // Build api/index.ts for Vercel serverless
-  console.log("building api function...");
+  // Build api/[[...slugs]].ts for Vercel serverless catch-all
+  console.log("building api catch-all function...");
   await esbuild({
-    entryPoints: ["api/index.ts"],
+    entryPoints: ["api/[[...slugs]].ts"],
     platform: "node",
     bundle: true,
     format: "cjs",
-    outfile: "api/index.cjs",
+    outfile: "api/[[...slugs]].cjs",
     define: {
       "process.env.NODE_ENV": '"production"',
     },
     external: externals,
     logLevel: "info",
   });
-  console.log("✓ Built api/index.js");
+  console.log("✓ Built api/[[...slugs]].cjs");
 }
 
 buildAll().catch((err) => {
