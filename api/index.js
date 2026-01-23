@@ -24341,7 +24341,16 @@ function serveStatic(app2) {
   }
   app2.use(import_express.default.static(distPath, {
     maxAge: "1d",
-    etag: false
+    etag: false,
+    lastModified: true,
+    setHeaders: (res, path2) => {
+      if (path2.endsWith(".js") || path2.endsWith(".css")) {
+        res.set("Cache-Control", "public, max-age=31536000, immutable");
+      }
+      if (path2.endsWith(".html")) {
+        res.set("Cache-Control", "public, max-age=0, must-revalidate");
+      }
+    }
   }));
   app2.use("*", (req, res) => {
     const indexPath = import_path.default.resolve(distPath, "index.html");
@@ -24349,6 +24358,7 @@ function serveStatic(app2) {
       console.error(`[Static] index.html not found at ${indexPath}`);
       return res.status(404).json({ error: "index.html not found" });
     }
+    res.set("Cache-Control", "public, max-age=0, must-revalidate");
     res.sendFile(indexPath);
   });
 }

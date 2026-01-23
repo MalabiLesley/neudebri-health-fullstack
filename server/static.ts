@@ -37,10 +37,21 @@ export function serveStatic(app: Express) {
     return;
   }
 
-  // Serve static files with caching
+  // Serve static files with proper cache headers for Vercel
   app.use(express.static(distPath, {
     maxAge: "1d",
-    etag: false
+    etag: false,
+    lastModified: true,
+    setHeaders: (res, path) => {
+      // Cache JavaScript and CSS for a long time
+      if (path.endsWith('.js') || path.endsWith('.css')) {
+        res.set('Cache-Control', 'public, max-age=31536000, immutable');
+      }
+      // Don't cache HTML
+      if (path.endsWith('.html')) {
+        res.set('Cache-Control', 'public, max-age=0, must-revalidate');
+      }
+    }
   }));
 
   // SPA fallback - serve index.html for all non-file routes
@@ -50,6 +61,7 @@ export function serveStatic(app: Express) {
       console.error(`[Static] index.html not found at ${indexPath}`);
       return res.status(404).json({ error: "index.html not found" });
     }
+    res.set('Cache-Control', 'public, max-age=0, must-revalidate');
     res.sendFile(indexPath);
   });
 }
