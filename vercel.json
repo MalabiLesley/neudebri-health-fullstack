@@ -1,6 +1,7 @@
 {
-  "buildCommand": "npm install --legacy-peer-deps && npx vite build",
+  "buildCommand": "bash build.sh",
   "outputDirectory": "dist/public",
-  "framework": "vite"
+  "framework": "vite",
+  "nodeVersion": "24.x"
 }
 
