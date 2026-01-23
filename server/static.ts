@@ -3,79 +3,69 @@ import fs from "fs";
 import path from "path";
 
 export function serveStatic(app: Express) {
-  // Try multiple possible paths for public directory
-  const possiblePaths = [
-    // For Vercel production
-    path.join(process.cwd(), "dist", "public"),
-    // For local production
-    path.resolve(__dirname, "..", "dist", "public"),
-    // Fallback
-    path.resolve(__dirname, "..", "public"),
-  ];
-
-  console.log(`[Static] CWD: ${process.cwd()}`);
-  console.log(`[Static] __dirname: ${__dirname}`);
-  console.log(`[Static] Looking for public files...`);
+  // In Vercel, we need to find public directory relative to where code is deployed
+  // The bundled server will be at .vercel/output/functions/api/[[...slugs]].func/
+  // But we import the app from ../server/index which is server/index.ts source
+  
   let distPath: string | null = null;
   
-  for (const p of possiblePaths) {
-    const exists = fs.existsSync(p);
-    console.log(`[Static] ${exists ? "✓" : "✗"} ${p}`);
-    if (exists && fs.existsSync(path.join(p, "index.html"))) {
-      distPath = p;
-      console.log(`[Static] ✓ Found index.html, using: ${distPath}`);
+  // Strategy: Look for dist/public relative to common deployment paths
+  const pathsToTry = [
+    // Current working directory (Vercel root)
+    path.join(process.cwd(), "dist", "public"),
+    // Relative to the bundled location
+    path.join(process.cwd(), "..", "..", "dist", "public"),
+    // For local development
+    path.resolve(__dirname, "..", "dist", "public"),
+    path.resolve(__dirname, "..", "..", "dist", "public"),
+  ];
+
+  console.log(`[Static] Process CWD: ${process.cwd()}`);
+  console.log(`[Static] Script dirname: ${__dirname}`);
+  
+  for (const tryPath of pathsToTry) {
+    const indexPath = path.join(tryPath, "index.html");
+    if (fs.existsSync(indexPath)) {
+      distPath = tryPath;
+      console.log(`[Static] ✓ Found dist/public at: ${distPath}`);
       break;
     }
   }
 
   if (!distPath) {
-    console.error(`[Static] ✗ Could not find public directory with index.html`);
-    console.error("[Static] Available files in process.cwd():");
-    try {
-      const files = fs.readdirSync(process.cwd());
-      console.error(files);
-    } catch (e) {
-      console.error("Could not read directory");
-    }
-    
-    // Still set up error route so we don't crash
-    app.use("*", (req, res) => {
-      res.status(404).json({ 
-        error: "Static files not found. dist/public/index.html missing.",
-        cwd: process.cwd(),
-        nodeEnv: process.env.NODE_ENV
-      });
-    });
-    return;
+    console.error(`[Static] ✗ Could not find dist/public/index.html`);
+    // Fallback: just serve from dist/public assuming it exists
+    // Vercel will handle the error if files are missing
+    distPath = path.join(process.cwd(), "dist", "public");
+    console.log(`[Static] ⚠️  Using fallback path: ${distPath}`);
   }
 
-  // Serve static files with proper cache headers
+  // Serve static assets with aggressive caching
   app.use(express.static(distPath, {
-    maxAge: "1d",
-    etag: true,
-    lastModified: true,
+    maxAge: "1y",
+    etag: false,
+    lastModified: false,
     setHeaders: (res, filepath) => {
-      // Cache JavaScript and CSS for a long time
-      if (filepath.endsWith('.js') || filepath.endsWith('.css')) {
+      if (filepath.match(/\.(js|css|woff2|ttf|eot|woff)$/i)) {
         res.set('Cache-Control', 'public, max-age=31536000, immutable');
-      }
-      // Don't cache HTML
-      else if (filepath.endsWith('.html')) {
+      } else if (filepath.endsWith('index.html') || filepath.endsWith('.html')) {
         res.set('Cache-Control', 'public, max-age=0, must-revalidate');
       }
     }
   }));
 
-  // SPA fallback - serve index.html for all non-file routes
-  app.use("*", (req, res) => {
+  // SPA fallback - serve index.html for all non-matched routes
+  app.use((req, res) => {
     const indexPath = path.join(distPath!, "index.html");
-    console.log(`[Static] SPA fallback for ${req.path} -> ${indexPath}`);
-    if (!fs.existsSync(indexPath)) {
-      console.error(`[Static] index.html not found at ${indexPath}`);
-      return res.status(404).json({ error: "index.html not found" });
-    }
+    console.log(`[SPA Fallback] ${req.method} ${req.path}`);
     res.set('Cache-Control', 'public, max-age=0, must-revalidate');
-    res.sendFile(indexPath);
+    res.sendFile(indexPath, (err) => {
+      if (err) {
+        console.error(`[SPA Fallback] Error sending index.html:`, err.message);
+        res.status(404).json({ error: "Not found" });
+      }
+    });
   });
 }
+
 
