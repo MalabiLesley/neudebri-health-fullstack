@@ -23515,12 +23515,12 @@ var require_express2 = __commonJS({
   }
 });
 
-// api/index.ts
-var index_exports = {};
-__export(index_exports, {
-  default: () => index_default
+// api/[[...slugs]].ts
+var slugs_exports = {};
+__export(slugs_exports, {
+  default: () => handler
 });
-module.exports = __toCommonJS(index_exports);
+module.exports = __toCommonJS(slugs_exports);
 
 // server/index.ts
 var import_express2 = __toESM(require_express2(), 1);
@@ -24459,9 +24459,10 @@ app.use((req, res, next) => {
 })();
 var server_default = app;
 
-// api/index.ts
-console.log("[API] Module loaded - exporting Express app");
-var index_default = server_default;
+// api/[[...slugs]].ts
+function handler(req, res) {
+  return server_default(req, res);
+}
 /*! Bundled license information:
 
 depd/index.js:
