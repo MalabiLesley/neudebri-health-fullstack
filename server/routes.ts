@@ -255,5 +255,166 @@ export async function registerRoutes(
     }
   });
 
+  // HR Management Routes
+  app.get("/api/hr/employees", async (req, res) => {
+    const employees = await storage.getEmployees();
+    res.json(employees);
+  });
+
+  app.get("/api/hr/employees/:id", async (req, res) => {
+    const employee = await storage.getEmployeeById(req.params.id);
+    if (!employee) {
+      return res.status(404).json({ message: "Employee not found" });
+    }
+    res.json(employee);
+  });
+
+  app.post("/api/hr/employees", async (req, res) => {
+    try {
+      const employee = await storage.createEmployee(req.body);
+      res.status(201).json(employee);
+    } catch (error) {
+      res.status(400).json({ message: "Failed to create employee record" });
+    }
+  });
+
+  app.patch("/api/hr/employees/:id", async (req, res) => {
+    try {
+      const employee = await storage.updateEmployee(req.params.id, req.body);
+      res.json(employee);
+    } catch (error) {
+      res.status(400).json({ message: "Failed to update employee" });
+    }
+  });
+
+  // Attendance routes
+  app.get("/api/hr/attendance", async (req, res) => {
+    const employeeId = req.query.employeeId as string;
+    const month = req.query.month as string;
+    const records = await storage.getAttendanceRecords(employeeId, month);
+    res.json(records);
+  });
+
+  app.post("/api/hr/attendance", async (req, res) => {
+    try {
+      const record = await storage.createAttendanceRecord(req.body);
+      res.status(201).json(record);
+    } catch (error) {
+      res.status(400).json({ message: "Failed to create attendance record" });
+    }
+  });
+
+  // Leave request routes
+  app.get("/api/hr/leaves", async (req, res) => {
+    const employeeId = req.query.employeeId as string;
+    const leaves = await storage.getLeaveRequests(employeeId);
+    res.json(leaves);
+  });
+
+  app.post("/api/hr/leaves", async (req, res) => {
+    try {
+      const leave = await storage.createLeaveRequest(req.body);
+      res.status(201).json(leave);
+    } catch (error) {
+      res.status(400).json({ message: "Failed to create leave request" });
+    }
+  });
+
+  app.patch("/api/hr/leaves/:id/approve", async (req, res) => {
+    try {
+      const leave = await storage.approveLeaveRequest(req.params.id, req.body.approvedBy);
+      res.json(leave);
+    } catch (error) {
+      res.status(400).json({ message: "Failed to approve leave request" });
+    }
+  });
+
+  // Payroll routes
+  app.get("/api/hr/payroll", async (req, res) => {
+    const employeeId = req.query.employeeId as string;
+    const month = req.query.month as string;
+    const records = await storage.getPayrollRecords(employeeId, month);
+    res.json(records);
+  });
+
+  app.post("/api/hr/payroll", async (req, res) => {
+    try {
+      const record = await storage.createPayrollRecord(req.body);
+      res.status(201).json(record);
+    } catch (error) {
+      res.status(400).json({ message: "Failed to create payroll record" });
+    }
+  });
+
+  // Performance review routes
+  app.get("/api/hr/performance-reviews", async (req, res) => {
+    const employeeId = req.query.employeeId as string;
+    const reviews = await storage.getPerformanceReviews(employeeId);
+    res.json(reviews);
+  });
+
+  app.post("/api/hr/performance-reviews", async (req, res) => {
+    try {
+      const review = await storage.createPerformanceReview(req.body);
+      res.status(201).json(review);
+    } catch (error) {
+      res.status(400).json({ message: "Failed to create performance review" });
+    }
+  });
+
+  // Shift schedule routes
+  app.get("/api/hr/shifts", async (req, res) => {
+    const employeeId = req.query.employeeId as string;
+    const shifts = await storage.getShiftSchedules(employeeId);
+    res.json(shifts);
+  });
+
+  app.post("/api/hr/shifts", async (req, res) => {
+    try {
+      const shift = await storage.createShiftSchedule(req.body);
+      res.status(201).json(shift);
+    } catch (error) {
+      res.status(400).json({ message: "Failed to create shift schedule" });
+    }
+  });
+
+  // Certifications routes
+  app.get("/api/hr/certifications", async (req, res) => {
+    const employeeId = req.query.employeeId as string;
+    const certs = await storage.getCertifications(employeeId);
+    res.json(certs);
+  });
+
+  app.post("/api/hr/certifications", async (req, res) => {
+    try {
+      const cert = await storage.createCertification(req.body);
+      res.status(201).json(cert);
+    } catch (error) {
+      res.status(400).json({ message: "Failed to add certification" });
+    }
+  });
+
+  // Assets routes
+  app.get("/api/hr/assets", async (req, res) => {
+    const employeeId = req.query.employeeId as string;
+    const assets = await storage.getAssetAllocations(employeeId);
+    res.json(assets);
+  });
+
+  app.post("/api/hr/assets", async (req, res) => {
+    try {
+      const asset = await storage.createAssetAllocation(req.body);
+      res.status(201).json(asset);
+    } catch (error) {
+      res.status(400).json({ message: "Failed to allocate asset" });
+    }
+  });
+
+  // HR Dashboard stats
+  app.get("/api/hr/stats", async (req, res) => {
+    const stats = await storage.getHRStats();
+    res.json(stats);
+  });
+
   return httpServer;
 }

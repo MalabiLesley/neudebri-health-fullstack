@@ -15,6 +15,16 @@ import {
   type WoundRecord, type InsertWoundRecord,
   type BillingRecord, type InsertBillingRecord,
   type InsuranceProvider, type Payment, type InsertPayment,
+  type EmployeeRecord, type InsertEmployeeRecord,
+  type ShiftSchedule, type InsertShiftSchedule,
+  type AttendanceRecord, type InsertAttendanceRecord,
+  type LeaveRequest, type InsertLeaveRequest,
+  type PayrollRecord, type InsertPayrollRecord,
+  type PerformanceReview, type InsertPerformanceReview,
+  type Certification, type InsertCertification,
+  type AssetAllocation, type InsertAssetAllocation,
+  type DisciplinaryAction, type InsertDisciplinaryAction,
+  type HRStats,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 
@@ -72,6 +82,44 @@ export interface IStorage {
   getInsuranceProviders(): Promise<InsuranceProvider[]>;
   createPayment(payment: InsertPayment): Promise<Payment>;
   
+  // HR Management
+  getEmployees(): Promise<EmployeeRecord[]>;
+  getEmployeeById(id: string): Promise<EmployeeRecord | undefined>;
+  createEmployee(employee: InsertEmployeeRecord): Promise<EmployeeRecord>;
+  updateEmployee(id: string, employee: Partial<InsertEmployeeRecord>): Promise<EmployeeRecord | undefined>;
+  
+  // Attendance
+  getAttendanceRecords(employeeId: string, month?: string): Promise<AttendanceRecord[]>;
+  createAttendanceRecord(record: InsertAttendanceRecord): Promise<AttendanceRecord>;
+  
+  // Leave Management
+  getLeaveRequests(employeeId?: string): Promise<LeaveRequest[]>;
+  createLeaveRequest(request: InsertLeaveRequest): Promise<LeaveRequest>;
+  approveLeaveRequest(id: string, approvedBy: string): Promise<LeaveRequest | undefined>;
+  
+  // Payroll
+  getPayrollRecords(employeeId?: string, month?: string): Promise<PayrollRecord[]>;
+  createPayrollRecord(record: InsertPayrollRecord): Promise<PayrollRecord>;
+  
+  // Performance Reviews
+  getPerformanceReviews(employeeId?: string): Promise<PerformanceReview[]>;
+  createPerformanceReview(review: InsertPerformanceReview): Promise<PerformanceReview>;
+  
+  // Shift Schedules
+  getShiftSchedules(employeeId?: string): Promise<ShiftSchedule[]>;
+  createShiftSchedule(schedule: InsertShiftSchedule): Promise<ShiftSchedule>;
+  
+  // Certifications
+  getCertifications(employeeId?: string): Promise<Certification[]>;
+  createCertification(cert: InsertCertification): Promise<Certification>;
+  
+  // Asset Management
+  getAssetAllocations(employeeId?: string): Promise<AssetAllocation[]>;
+  createAssetAllocation(asset: InsertAssetAllocation): Promise<AssetAllocation>;
+  
+  // HR Stats
+  getHRStats(): Promise<HRStats>;
+  
   // Dashboard
   getDashboardStats(userId: string, role: string): Promise<DashboardStats>;
   
@@ -92,6 +140,14 @@ export class MemStorage implements IStorage {
   private billings: Map<string, BillingRecord>;
   private insurances: Map<string, InsuranceProvider>;
   private payments: Map<string, Payment>;
+  private employees: Map<string, EmployeeRecord>;
+  private shifts: Map<string, ShiftSchedule>;
+  private attendance: Map<string, AttendanceRecord>;
+  private leaves: Map<string, LeaveRequest>;
+  private payroll: Map<string, PayrollRecord>;
+  private reviews: Map<string, PerformanceReview>;
+  private certifications: Map<string, Certification>;
+  private assets: Map<string, AssetAllocation>;
 
   constructor() {
     this.users = new Map();
@@ -106,6 +162,14 @@ export class MemStorage implements IStorage {
     this.billings = new Map();
     this.insurances = new Map();
     this.payments = new Map();
+    this.employees = new Map();
+    this.shifts = new Map();
+    this.attendance = new Map();
+    this.leaves = new Map();
+    this.payroll = new Map();
+    this.reviews = new Map();
+    this.certifications = new Map();
+    this.assets = new Map();
     
     this.seedData();
   }
@@ -755,6 +819,235 @@ export class MemStorage implements IStorage {
 
     return p;
   }
-}
 
-export const storage = new MemStorage();
+  // HR Management Methods
+  async getEmployees(): Promise<EmployeeRecord[]> {
+    return Array.from(this.employees.values())
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  async getEmployeeById(id: string): Promise<EmployeeRecord | undefined> {
+    return this.employees.get(id);
+  }
+
+  async createEmployee(employee: InsertEmployeeRecord): Promise<EmployeeRecord> {
+    const id = randomUUID();
+    const now = new Date().toISOString();
+    const record: EmployeeRecord = {
+      id,
+      ...employee,
+      createdAt: now,
+      updatedAt: now,
+    };
+    this.employees.set(id, record);
+    return record;
+  }
+
+  async updateEmployee(id: string, updates: Partial<InsertEmployeeRecord>): Promise<EmployeeRecord | undefined> {
+    const employee = this.employees.get(id);
+    if (!employee) return undefined;
+    
+    const updated: EmployeeRecord = {
+      ...employee,
+      ...updates,
+      updatedAt: new Date().toISOString(),
+    };
+    this.employees.set(id, updated);
+    return updated;
+  }
+
+  async getAttendanceRecords(employeeId: string, month?: string): Promise<AttendanceRecord[]> {
+    return Array.from(this.attendance.values())
+      .filter((a) => {
+        if (a.employeeId !== employeeId) return false;
+        if (month && !a.date.startsWith(month)) return false;
+        return true;
+      })
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }
+
+  async createAttendanceRecord(record: InsertAttendanceRecord): Promise<AttendanceRecord> {
+    const id = randomUUID();
+    const now = new Date().toISOString();
+    const ar: AttendanceRecord = {
+      id,
+      ...record,
+      createdAt: now,
+    };
+    this.attendance.set(id, ar);
+    return ar;
+  }
+
+  async getLeaveRequests(employeeId?: string): Promise<LeaveRequest[]> {
+    return Array.from(this.leaves.values())
+      .filter((l) => !employeeId || l.employeeId === employeeId)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  async createLeaveRequest(request: InsertLeaveRequest): Promise<LeaveRequest> {
+    const id = randomUUID();
+    const now = new Date().toISOString();
+    const lr: LeaveRequest = {
+      id,
+      ...request,
+      status: "pending",
+      createdAt: now,
+    };
+    this.leaves.set(id, lr);
+    return lr;
+  }
+
+  async approveLeaveRequest(id: string, approvedBy: string): Promise<LeaveRequest | undefined> {
+    const leave = this.leaves.get(id);
+    if (!leave) return undefined;
+    
+    const updated: LeaveRequest = {
+      ...leave,
+      status: "approved",
+      approvedBy,
+      approvalDate: new Date().toISOString(),
+    };
+    this.leaves.set(id, updated);
+    return updated;
+  }
+
+  async getPayrollRecords(employeeId?: string, month?: string): Promise<PayrollRecord[]> {
+    return Array.from(this.payroll.values())
+      .filter((p) => {
+        if (employeeId && p.employeeId !== employeeId) return false;
+        if (month && p.month !== month) return false;
+        return true;
+      })
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  async createPayrollRecord(record: InsertPayrollRecord): Promise<PayrollRecord> {
+    const id = randomUUID();
+    const now = new Date().toISOString();
+    const pr: PayrollRecord = {
+      id,
+      ...record,
+      status: "pending",
+      createdAt: now,
+    };
+    this.payroll.set(id, pr);
+    return pr;
+  }
+
+  async getPerformanceReviews(employeeId?: string): Promise<PerformanceReview[]> {
+    return Array.from(this.reviews.values())
+      .filter((r) => !employeeId || r.employeeId === employeeId)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  async createPerformanceReview(review: InsertPerformanceReview): Promise<PerformanceReview> {
+    const id = randomUUID();
+    const now = new Date().toISOString();
+    const pr: PerformanceReview = {
+      id,
+      ...review,
+      status: "draft",
+      createdAt: now,
+    };
+    this.reviews.set(id, pr);
+    return pr;
+  }
+
+  async getShiftSchedules(employeeId?: string): Promise<ShiftSchedule[]> {
+    return Array.from(this.shifts.values())
+      .filter((s) => !employeeId || s.employeeId === employeeId)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  async createShiftSchedule(schedule: InsertShiftSchedule): Promise<ShiftSchedule> {
+    const id = randomUUID();
+    const now = new Date().toISOString();
+    const ss: ShiftSchedule = {
+      id,
+      ...schedule,
+      createdAt: now,
+    };
+    this.shifts.set(id, ss);
+    return ss;
+  }
+
+  async getCertifications(employeeId?: string): Promise<Certification[]> {
+    return Array.from(this.certifications.values())
+      .filter((c) => !employeeId || c.employeeId === employeeId)
+      .sort((a, b) => new Date(b.issueDate).getTime() - new Date(a.issueDate).getTime());
+  }
+
+  async createCertification(cert: InsertCertification): Promise<Certification> {
+    const id = randomUUID();
+    const now = new Date().toISOString();
+    const c: Certification = {
+      id,
+      ...cert,
+      createdAt: now,
+    };
+    this.certifications.set(id, c);
+    return c;
+  }
+
+  async getAssetAllocations(employeeId?: string): Promise<AssetAllocation[]> {
+    return Array.from(this.assets.values())
+      .filter((a) => !employeeId || a.employeeId === employeeId)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  async createAssetAllocation(asset: InsertAssetAllocation): Promise<AssetAllocation> {
+    const id = randomUUID();
+    const now = new Date().toISOString();
+    const aa: AssetAllocation = {
+      id,
+      ...asset,
+      createdAt: now,
+    };
+    this.assets.set(id, aa);
+    return aa;
+  }
+
+  async getHRStats(): Promise<HRStats> {
+    const allEmployees = Array.from(this.employees.values());
+    const activeEmployees = allEmployees.filter((e) => e.status === "active");
+    const onLeave = allEmployees.filter((e) => e.status === "on_leave");
+    
+    const totalAttendance = Array.from(this.attendance.values());
+    const absences = totalAttendance.filter((a) => a.status === "absent").length;
+    const absenceRate = totalAttendance.length > 0 
+      ? (absences / totalAttendance.length) * 100 
+      : 0;
+
+    const departments: Record<string, number> = {};
+    allEmployees.forEach((emp) => {
+      departments[emp.department] = (departments[emp.department] || 0) + 1;
+    });
+
+    const pendingLeaves = Array.from(this.leaves.values())
+      .filter((l) => l.status === "pending").length;
+
+    const pendingPayroll = Array.from(this.payroll.values())
+      .filter((p) => p.status === "pending").length;
+
+    const today = new Date();
+    const expiringCerts = Array.from(this.certifications.values())
+      .filter((c) => {
+        if (!c.expiryDate) return false;
+        const expiry = new Date(c.expiryDate);
+        const thirtyDaysFromNow = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
+        return expiry <= thirtyDaysFromNow && expiry >= today;
+      }).length;
+
+    return {
+      totalEmployees: allEmployees.length,
+      activeEmployees: activeEmployees.length,
+      onLeaveCount: onLeave.length,
+      absenceRate: Math.round(absenceRate * 100) / 100,
+      departmentBreakdown: departments,
+      upcomingLeaveRequests: pendingLeaves,
+      pendingPayroll,
+      certificationsExpiring: expiringCerts,
+    };
+  }
+
+

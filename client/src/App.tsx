@@ -25,6 +25,7 @@ import NotFound from "@/pages/not-found";
 import WoundCare from "@/pages/wound-care";
 import Nurses from "@/pages/nurses";
 import Finance from "@/pages/finance";
+import HRManagement from "@/pages/hr-management";
 import OPDConsole from "@/pages/opd-console";
 import IPDConsole from "@/pages/ipd-console";
 import EmergencyConsole from "@/pages/emergency-console";
@@ -44,6 +45,7 @@ function Router() {
       <Route path="/doctors" component={Doctors} />
       <Route path="/nurses" component={Nurses} />
       <Route path="/finance" component={Finance} />
+      <Route path="/hr-management" component={HRManagement} />
       <Route path="/departments" component={Departments} />
       <Route path="/opd" component={OPDConsole} />
       <Route path="/ipd" component={IPDConsole} />

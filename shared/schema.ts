@@ -259,3 +259,184 @@ export interface Payment {
 
 export type InsertPayment = Omit<Payment, "id" | "paidAt">;
 
+// HR Management Module
+export type EmployeeStatus = "active" | "inactive" | "on_leave" | "suspended" | "retired";
+export type LeaveType = "annual" | "medical" | "emergency" | "maternity" | "paternity" | "unpaid" | "sick";
+export type AttendanceStatus = "present" | "absent" | "late" | "half_day" | "on_leave";
+
+// Employee records (extends User for HR features)
+export interface EmployeeRecord {
+  id: string;
+  userId: string; // Links to users table
+  employeeId: string; // Unique employee code
+  designation: string; // Job title
+  department: string;
+  joinDate: string;
+  endDate?: string | null;
+  status: EmployeeStatus;
+  salary: number;
+  currency?: string | null;
+  qualifications?: string | null; // JSON or comma-separated
+  certifications?: string | null;
+  emergencyContactName?: string | null;
+  emergencyContactPhone?: string | null;
+  bankAccountName?: string | null;
+  bankAccountNumber?: string | null;
+  bankCode?: string | null;
+  taxId?: string | null;
+  notes?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type InsertEmployeeRecord = Omit<EmployeeRecord, "id" | "createdAt" | "updatedAt">;
+
+// Shift Management
+export interface ShiftSchedule {
+  id: string;
+  employeeId: string;
+  shiftType: string; // morning, afternoon, night, flexible
+  startTime: string; // HH:mm format
+  endTime: string; // HH:mm format
+  days: string[]; // ["Monday", "Tuesday", etc.]
+  startDate: string;
+  endDate?: string | null;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export type InsertShiftSchedule = Omit<ShiftSchedule, "id" | "createdAt">;
+
+// Attendance tracking
+export interface AttendanceRecord {
+  id: string;
+  employeeId: string;
+  date: string;
+  status: AttendanceStatus;
+  checkInTime?: string | null;
+  checkOutTime?: string | null;
+  hoursWorked?: number | null;
+  notes?: string | null;
+  approvedBy?: string | null;
+  createdAt: string;
+}
+
+export type InsertAttendanceRecord = Omit<AttendanceRecord, "id" | "createdAt">;
+
+// Leave management
+export interface LeaveRequest {
+  id: string;
+  employeeId: string;
+  leaveType: LeaveType;
+  startDate: string;
+  endDate: string;
+  daysRequested: number;
+  reason?: string | null;
+  status: "pending" | "approved" | "rejected" | "cancelled";
+  approvedBy?: string | null;
+  approvalDate?: string | null;
+  rejectionReason?: string | null;
+  createdAt: string;
+}
+
+export type InsertLeaveRequest = Omit<LeaveRequest, "id" | "createdAt">;
+
+// Payroll
+export interface PayrollRecord {
+  id: string;
+  employeeId: string;
+  month: string; // YYYY-MM
+  baseSalary: number;
+  allowances?: number | null;
+  deductions?: number | null;
+  taxAmount?: number | null;
+  netSalary: number;
+  currency?: string | null;
+  status: "pending" | "processed" | "paid" | "failed";
+  processedDate?: string | null;
+  paidDate?: string | null;
+  bankTransactionId?: string | null;
+  notes?: string | null;
+  createdAt: string;
+}
+
+export type InsertPayrollRecord = Omit<PayrollRecord, "id" | "createdAt">;
+
+// Performance Review
+export interface PerformanceReview {
+  id: string;
+  employeeId: string;
+  reviewedBy: string; // Manager/Supervisor ID
+  reviewPeriodStart: string;
+  reviewPeriodEnd: string;
+  rating: number; // 1-5
+  strengths?: string | null;
+  areasForImprovement?: string | null;
+  comments?: string | null;
+  status: "draft" | "submitted" | "approved";
+  createdAt: string;
+}
+
+export type InsertPerformanceReview = Omit<PerformanceReview, "id" | "createdAt">;
+
+// Certification & Training
+export interface Certification {
+  id: string;
+  employeeId: string;
+  certificationName: string;
+  issuingBody: string;
+  issueDate: string;
+  expiryDate?: string | null;
+  certificateNumber?: string | null;
+  documentUrl?: string | null;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export type InsertCertification = Omit<Certification, "id" | "createdAt">;
+
+// Equipment & Asset Tracking
+export interface AssetAllocation {
+  id: string;
+  employeeId: string;
+  assetName: string;
+  assetType: string; // laptop, phone, badge, etc.
+  serialNumber?: string | null;
+  allocationDate: string;
+  deallocationDate?: string | null;
+  status: "allocated" | "returned" | "damaged" | "lost";
+  condition?: string | null;
+  notes?: string | null;
+  createdAt: string;
+}
+
+export type InsertAssetAllocation = Omit<AssetAllocation, "id" | "createdAt">;
+
+// Disciplinary Actions
+export interface DisciplinaryAction {
+  id: string;
+  employeeId: string;
+  actionType: string; // warning, suspension, termination, etc.
+  severity: "minor" | "moderate" | "severe";
+  reason: string;
+  actionDate: string;
+  reviewDate?: string | null;
+  status: "active" | "resolved" | "appealed";
+  notes?: string | null;
+  createdAt: string;
+}
+
+export type InsertDisciplinaryAction = Omit<DisciplinaryAction, "id" | "createdAt">;
+
+// HR Dashboard Stats
+export interface HRStats {
+  totalEmployees: number;
+  activeEmployees: number;
+  onLeaveCount: number;
+  absenceRate: number;
+  departmentBreakdown: Record<string, number>;
+  upcomingLeaveRequests: number;
+  pendingPayroll: number;
+  certificationsExpiring: number;
+}
+

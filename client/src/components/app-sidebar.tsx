@@ -16,7 +16,8 @@ import {
   Shield,
   AlertTriangle,
   Bed,
-  Stethoscope
+  Stethoscope,
+  Briefcase
 } from "lucide-react";
 import {
   Sidebar,
@@ -79,6 +80,7 @@ const adminNavItems = [
   { title: "Doctors", url: "/doctors", icon: Activity },
   { title: "Nurses", url: "/nurses", icon: Users },
   { title: "Departments", url: "/departments", icon: Building2 },
+  { title: "HR Management", url: "/hr-management", icon: Briefcase },
   { title: "Finance", url: "/finance", icon: Shield },
   { title: "Messages", url: "/messages", icon: MessageSquare },
   { title: "Settings", url: "/settings", icon: Settings },
