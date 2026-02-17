@@ -1049,5 +1049,5 @@ export class MemStorage implements IStorage {
       certificationsExpiring: expiringCerts,
     };
   }
-
-
+}
+export const storage = new MemStorage();
