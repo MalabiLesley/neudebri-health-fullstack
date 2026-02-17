@@ -1,0 +1,15 @@
+
+server/vite.ts:1:import { type Express } from "express";
+server/static.ts:1:import express, { type Express } from "express";
+server/static.ts:44:  app.use(express.static(distPath, {
+server/routes.ts:1:import type { Express } from "express";
+server/index.ts:1:import express, { type Request, Response, NextFunction } from "express";
+server/index.ts:6:const app = express();
+server/index.ts:16:  express.json({
+server/index.ts:23:app.use(express.urlencoded({ extended: false }));
+server/index.ts:25:export function log(message: string, source = "express") {
+server/src/routes/appointments.ts:1:import express from "express";
+server/src/routes/appointments.ts:4:const router = express.Router();
+server/src/index.ts:1:import express from "express";
+server/src/index.ts:5:const app = express();
+server/src/index.ts:7:app.use(express.json());

@@ -1,12 +1,14 @@
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import { Search, Plus, Filter, Clock, User, Phone, Calendar } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/lib/auth-context";
-import type { AppointmentWithDetails } from "@shared/schema";
+import { apiFetch } from "../lib/api";
+// add import for shared types
+import type { AppointmentWithDetails } from "../../../shared/types";
 
 export default function OPDConsole() {
   const { user } = useAuth();
@@ -15,12 +17,15 @@ export default function OPDConsole() {
 
   const { data: appointments, isLoading } = useQuery<AppointmentWithDetails[]>({
     queryKey: ["/api/appointments"],
+    queryFn: async () => {
+      return (await apiFetch("/api/appointments")) as AppointmentWithDetails[];
+    },
   });
 
   const filteredAppointments = appointments?.filter((apt) => {
     const matchesSearch =
-      apt.patientName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      apt.doctorName?.toLowerCase().includes(searchTerm.toLowerCase());
+      ((`${apt.patient?.firstName ?? ""} ${apt.patient?.lastName ?? ""}`.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (`${apt.doctor?.firstName ?? ""} ${apt.doctor?.lastName ?? ""}`.toLowerCase().includes(searchTerm.toLowerCase())));
     const matchesStatus = filterStatus === "all" || apt.status === filterStatus;
     return matchesSearch && matchesStatus;
   }) ?? [];
@@ -131,7 +136,7 @@ export default function OPDConsole() {
                       <User size={20} className="text-blue-600" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold truncate">{apt.patientName}</p>
+                      <p className="font-semibold truncate">{`${apt.patient?.firstName ?? ""} ${apt.patient?.lastName ?? ""}`}</p>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Clock size={16} />
                         {apt.dateTime ? new Date(apt.dateTime).toLocaleTimeString() : "N/A"}
@@ -140,7 +145,7 @@ export default function OPDConsole() {
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="text-right">
-                      <p className="text-sm font-medium">{apt.doctorName}</p>
+                      <p className="text-sm font-medium">{`${apt.doctor?.firstName ?? ""} ${apt.doctor?.lastName ?? ""}`}</p>
                       <p className="text-xs text-muted-foreground">{apt.department}</p>
                     </div>
                     <Badge className={getStatusColor(apt.status)}>

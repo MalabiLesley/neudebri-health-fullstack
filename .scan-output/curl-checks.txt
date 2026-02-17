@@ -1,0 +1,5 @@
+==> Quick curl to /health and /api/appointments
+curl: (7) Failed to connect to localhost port 4000 after 0 ms: Couldn't connect to server
+health: not reachable
+curl: (7) Failed to connect to localhost port 4000 after 0 ms: Couldn't connect to server
+appointments: not reachable

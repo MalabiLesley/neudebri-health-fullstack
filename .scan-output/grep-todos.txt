@@ -1,0 +1,7 @@
+./.git/hooks/sendemail-validate.sample:22:# Replace the TODO placeholders with appropriate checks according to your
+./.git/hooks/sendemail-validate.sample:27:	# TODO: Replace with appropriate checks (e.g. spell checking).
+./.git/hooks/sendemail-validate.sample:35:	# TODO: Replace with appropriate checks for this patch
+./.git/hooks/sendemail-validate.sample:41:	# TODO: Replace with appropriate checks for the whole series
+./dist/index.cjs:4349:      // TODO: KDDI extension to Shift_JIS
+./dist/index.cjs:4350:      // TODO: IBM CCSID 942 = CP932, but F0-F9 custom chars and other char changes.
+./dist/index.cjs:4351:      // TODO: IBM CCSID 943 = Shift_JIS = CP932 with original Shift_JIS lower 128 chars.

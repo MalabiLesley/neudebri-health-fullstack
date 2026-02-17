@@ -1,0 +1,49 @@
+==> Node / npm versions
+v24.11.1
+11.6.2
+
+==> Project top-level files
+total 712
+drwxrwxrwx+  13 codespace root        4096 Jan 25 06:27 .
+drwxr-xrwx+   5 codespace root        4096 Jan 22 19:03 ..
+-rw-rw-rw-    1 codespace root         659 Jan 23 21:12 .env.example
+-rw-rw-rw-    1 codespace codespace    204 Jan 23 21:12 .env.production
+drwxrwxrwx+   8 codespace root        4096 Jan 24 06:04 .git
+drwxrwxrwx+   3 codespace root        4096 Jan 22 19:02 .github
+-rw-rw-rw-    1 codespace root          67 Jan 22 19:02 .gitignore
+-rw-rw-rw-    1 codespace codespace      2 Jan 23 22:04 .nvmrc
+drwxrwxrwx+   2 codespace codespace   4096 Jan 25 06:27 .scan-output
+drwxrwxrwx+   3 codespace root        4096 Jan 22 19:02 .vercel
+-rw-rw-rw-    1 codespace root         165 Jan 22 19:02 .vercelignore
+-rw-rw-rw-    1 codespace codespace  10028 Jan 23 21:37 DEPLOYMENT_CHECKLIST.md
+-rw-rw-rw-    1 codespace root         433 Jan 22 19:02 Dockerfile
+-rw-rw-rw-    1 codespace codespace  10906 Jan 24 06:02 HMIS_COMPLETION_REPORT.md
+-rw-rw-rw-    1 codespace codespace  11329 Jan 23 21:28 HMIS_QUICK_REFERENCE.md
+-rw-rw-rw-    1 codespace codespace   6621 Jan 23 21:21 HMIS_SYSTEM_GUIDE.md
+-rw-rw-rw-    1 codespace codespace  12877 Jan 23 21:38 NEUDEBRI_DEPLOYMENT_GUIDE.md
+-rw-rw-rw-    1 codespace codespace   8787 Jan 23 21:29 PROJECT_COMPLETION_SUMMARY.md
+-rw-rw-rw-    1 codespace root       18415 Jan 23 21:28 README.md
+-rw-rw-rw-    1 codespace codespace   3975 Jan 23 21:26 SANITAS_HMIS_SPECIFICATION.md
+-rw-rw-rw-    1 codespace codespace  15907 Jan 23 21:39 SANITAS_PROFESSIONAL_ALIGNMENT.md
+-rw-rw-rw-    1 codespace codespace  15726 Jan 24 06:03 SYSTEM_CORRECTIONS_SUMMARY.md
+-rw-rw-rw-    1 codespace codespace   1505 Jan 23 22:01 VERCEL_FIX_REFERENCE.md
+-rw-rw-rw-    1 codespace codespace    257 Jan 23 22:10 build.sh
+drwxrwxrwx+   4 codespace root        4096 Jan 22 19:02 client
+-rw-rw-rw-    1 codespace root         459 Jan 22 19:02 components.json
+-rw-rw-rw-    1 codespace root        7223 Jan 22 19:02 design_guidelines.md
+drwxrwxrwx+   3 codespace codespace   4096 Jan 23 21:30 dist
+drwxrwxrwx+   2 codespace root        4096 Jan 24 06:44 docs
+-rw-rw-rw-    1 codespace root         325 Jan 22 19:02 drizzle.config.ts
+drwxrwxrwx+ 314 codespace codespace  12288 Jan 24 06:37 node_modules
+-rw-rw-rw-    1 codespace root      293514 Jan 24 06:47 package-lock.json
+-rw-rw-rw-    1 codespace root        3506 Jan 23 21:49 package.json
+-rw-rw-rw-    1 codespace root         190 Jan 23 20:35 postcss.config.cjs
+-rw-rw-rw-    1 codespace codespace    263 Jan 23 21:11 render.yaml
+drwxrwxrwx+   2 codespace root        4096 Jan 22 19:02 script
+drwxrwxrwx+   3 codespace root        4096 Jan 24 06:39 server
+drwxrwxrwx+   2 codespace root        4096 Jan 24 06:34 shared
+-rw-rw-rw-    1 codespace root      161734 Jan 22 19:02 structure.txt
+-rw-rw-rw-    1 codespace root        4050 Jan 22 19:02 tailwind.config.ts
+-rw-rw-rw-    1 codespace root         657 Jan 22 19:02 tsconfig.json
+-rw-rw-rw-    1 codespace root          98 Jan 23 22:13 vercel.json
+-rw-rw-rw-    1 codespace root        1006 Jan 22 19:02 vite.config.ts
