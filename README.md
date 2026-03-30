@@ -1,4 +1,3 @@
-# 🏥 SANITAS HMIS - Hospital Management Information System
 
 **Neudebri Health** - A comprehensive, production-grade **HMIS (Hospital Management Information System)** built on SANITAS standards for professional healthcare management.
 
